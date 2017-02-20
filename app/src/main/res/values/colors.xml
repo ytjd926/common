@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#5DD7DF</color>
+    <color name="colorPrimaryDark">#5DD7DF</color>
+    <color name="colorAccent">#3BD6C4</color>
+
+    <color name="transparent_half_2">#20000000</color>
+
+    <color name="light_gray_line">#DCDCDC</color>
+
+    <color name="light_black_a">#AAAAAA</color>
+    <color name="light_black_9">#999999</color>
+    <color name="light_black_6">#666666</color>
+    <color name="light_black_3">#333333</color>
+
+    <color name="green_we_chat_normal">#19AC18</color>
+    <color name="green_we_chat_pressed">#169A15</color>
+
+    <color name="toolbar_menu_color">#FFFFFF</color>
+    <color name="toolbar_bg_color">#5DD7DF</color>
+    <color name="toolbar_title_color">#FFFFFF</color>
+</resources>
