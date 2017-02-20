@@ -27,5 +27,3 @@ proguard/
 
 # Log Files
 *.log
-
-gradle-wrapper.properties
