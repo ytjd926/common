@@ -36,16 +36,19 @@ public class ActRecord extends BaseActivity implements BaseQuickAdapter.RequestL
         getDataOrRefresh();
     }
 
-    private void hasMore(Object mData) {
+    private boolean hasMore(Object mData) {
         boolean hasMore = false;
         try {
             hasMore = ((JSONObject) mData).optBoolean("hasNextPage");
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if (!hasMore) {
+        if (hasMore) {
+            mRvRecord.mAdapter.loadMoreEnd(false);
+        } else {
             mRvRecord.mAdapter.loadMoreEnd(true);
         }
+        return hasMore;
     }
 
     private void setData(List<RecordBean> beans) {
@@ -104,7 +107,7 @@ public class ActRecord extends BaseActivity implements BaseQuickAdapter.RequestL
                     hasMore(result.mData);
                     List<RecordBean> beans = RecordBean.parseList(result.mData);
                     if (beans == null || beans.size() == 0) {
-                        onError("没有数据");
+                        onError("没有更多数据");
                         mRvRecord.mAdapter.loadMoreFail();
                     } else {
                         addData(beans);
@@ -146,6 +149,12 @@ public class ActRecord extends BaseActivity implements BaseQuickAdapter.RequestL
             @Override
             public void onSimpleItemClick(BaseQuickAdapter adapter, View view, int position) {
                 ActRecordDetail.startActivity(ActRecord.this, ((RecordBean) adapter.getItem(position)).mWasteId);
+            }
+        });
+        mRvRecord.setOnEmptyViewClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getDataOrRefresh();
             }
         });
     }

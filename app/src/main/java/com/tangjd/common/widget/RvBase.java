@@ -17,7 +17,7 @@ import java.util.List;
  * Created by tangjd on 2016/9/23.
  */
 public abstract class RvBase<T> extends RecyclerView {
-    private View mLoadingView, mEmptyView, mErrorView;
+    public View mLoadingView, mEmptyView, mErrorView;
 
     public RvBase(Context context) {
         this(context, null);
@@ -32,14 +32,18 @@ public abstract class RvBase<T> extends RecyclerView {
         init(context);
     }
 
-    private void init(Context context) {
+    public void init(Context context) {
         setLayoutManager(customSetLayoutManager(context));
-        mAdapter = new CustomAdapter(customSetItemLayoutId());
+        mAdapter = instanceCustomAdapter();
         setAdapter(mAdapter);
 
         mLoadingView = LayoutInflater.from(context).inflate(R.layout.rv_loading_layout, this, false);
         mEmptyView = LayoutInflater.from(context).inflate(R.layout.rv_empty_data_layout, this, false);
         mErrorView = LayoutInflater.from(context).inflate(R.layout.rv_error_layout, this, false);
+    }
+
+    public BaseQuickAdapter<T, BaseViewHolder> instanceCustomAdapter() {
+        return new CustomAdapter(customSetItemLayoutId());
     }
 
     public void showLoadingView() {
@@ -52,6 +56,11 @@ public abstract class RvBase<T> extends RecyclerView {
 
     public void showErrorView() {
         mAdapter.setEmptyView(mErrorView);
+    }
+
+    public void setOnEmptyViewClickListener(OnClickListener listener) {
+        mEmptyView.setOnClickListener(listener);
+        mErrorView.setOnClickListener(listener);
     }
 
     public void clearEmptyView() {
@@ -68,7 +77,7 @@ public abstract class RvBase<T> extends RecyclerView {
         mAdapter.setNewData(data);
     }
 
-    public CustomAdapter mAdapter;
+    public BaseQuickAdapter<T, BaseViewHolder> mAdapter;
 
     public class CustomAdapter extends BaseQuickAdapter<T, BaseViewHolder> {
 

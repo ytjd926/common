@@ -10,12 +10,10 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.tangjd.common.utils.DisplayUtils;
 
-import java.util.List;
-
 /**
  * Created by tangjd on 2016/9/23.
  */
-public abstract class RvBaseWithSlideDelete<T> extends RecyclerView {
+public abstract class RvBaseWithSlideDelete<T> extends RvBase<T> {
 
     public RvBaseWithSlideDelete(Context context) {
         this(context, null);
@@ -27,26 +25,12 @@ public abstract class RvBaseWithSlideDelete<T> extends RecyclerView {
 
     public RvBaseWithSlideDelete(Context context, @Nullable AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        init(context);
     }
 
-    private void init(Context context) {
-        setLayoutManager(customSetLayoutManager(context));
-        mAdapter = new CustomAdapter(customSetItemLayoutId());
-        setAdapter(mAdapter);
+    @Override
+    public BaseQuickAdapter<T, BaseViewHolder> instanceCustomAdapter() {
+        return new CustomAdapter(customSetItemLayoutId());
     }
-
-    public abstract LayoutManager customSetLayoutManager(Context context);
-
-    public abstract int customSetItemLayoutId();
-
-    public abstract void customConvert(BaseViewHolder holder, T t);
-
-    public void setData(List<T> data) {
-        mAdapter.setNewData(data);
-    }
-
-    public CustomAdapter mAdapter;
 
     public class CustomAdapter extends BaseQuickAdapter<T, BaseViewHolder> implements ItemSlideHelper.Callback {
 
