@@ -1,4 +1,4 @@
-package com.minorfish.hospitalwaste.record;
+package com.minorfish.hospitalwaste.msg;
 
 import android.content.Context;
 import android.content.Intent;
@@ -17,66 +17,31 @@ import com.tangjd.common.abs.JsonApiBase;
 
 import org.json.JSONObject;
 
-import java.util.List;
-
 /**
- * Created by tangjd on 2017/2/17.
+ * Created by tangjd on 2017/2/23.
  */
-
-public class ActRecord extends BaseActivity implements BaseQuickAdapter.RequestLoadMoreListener {
+public class ActMsg extends BaseActivity implements BaseQuickAdapter.RequestLoadMoreListener {
     private SwipeRefreshLayout mSrl;
-    private RvRecord mRvRecord;
+    private RvMsg mRvMsg;
     private int mCurrPage = 1;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.act_record_layout);
+        setContentView(R.layout.act_msg_layout);
         initView();
         getDataOrRefresh();
     }
 
-    private boolean hasMore(Object mData) {
-        boolean hasMore = false;
-        try {
-            hasMore = ((JSONObject) mData).optBoolean("hasNextPage");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        if (hasMore) {
-            mRvRecord.mAdapter.loadMoreEnd(false);
-        } else {
-            mRvRecord.mAdapter.loadMoreEnd(true);
-        }
-        return hasMore;
-    }
-
-    private void setData(List<RecordBean> beans) {
-        mRvRecord.mAdapter.setNewData(beans);
-    }
-
-    private void addData(List<RecordBean> beans) {
-        mRvRecord.mAdapter.addData(beans);
-    }
-
     private void getDataOrRefresh() {
         mCurrPage = 1;
-        mRvRecord.showLoadingView();
-        Api.getRecord(mCurrPage, new JsonApiBase.OnJsonResponseListener() {
+        mRvMsg.showLoadingView();
+        Api.getMsg(mCurrPage, new JsonApiBase.OnJsonResponseListener() {
             @Override
             public void onResponse(JSONObject response) {
                 Result result = Result.parse(response);
                 if (result.isSuccess()) {
-                    hasMore(result.mData);
-                    List<RecordBean> beans = RecordBean.parseList(result.mData);
-                    if (beans == null) {
-                        mRvRecord.showErrorView();
-                    } else if (beans.size() == 0) {
-                        mRvRecord.showEmptyView();
-                    } else {
-                        setData(beans);
-                        mRvRecord.clearEmptyView();
-                    }
+                    mRvMsg.onGetDataSuccess(((JSONObject) result.mData).optBoolean("hasNextPage"), MsgBean.parseList(result.mData));
                 } else {
                     onError(result.mMsg);
                 }
@@ -85,7 +50,7 @@ public class ActRecord extends BaseActivity implements BaseQuickAdapter.RequestL
             @Override
             public void onError(String error) {
                 showLongToast(error + "");
-                mRvRecord.showErrorView();
+                mRvMsg.onGetDataFail();
             }
 
             @Override
@@ -99,20 +64,12 @@ public class ActRecord extends BaseActivity implements BaseQuickAdapter.RequestL
     public void onLoadMoreRequested() {
         mSrl.setEnabled(false);
         mCurrPage++;
-        Api.getRecord(mCurrPage, new JsonApiBase.OnJsonResponseListener() {
+        Api.getMsg(mCurrPage, new JsonApiBase.OnJsonResponseListener() {
             @Override
             public void onResponse(JSONObject response) {
                 Result result = Result.parse(response);
                 if (result.isSuccess()) {
-                    hasMore(result.mData);
-                    List<RecordBean> beans = RecordBean.parseList(result.mData);
-                    if (beans == null || beans.size() == 0) {
-                        onError("没有更多数据");
-                        mRvRecord.mAdapter.loadMoreFail();
-                    } else {
-                        addData(beans);
-                        mRvRecord.mAdapter.loadMoreComplete();
-                    }
+                    mRvMsg.onLoadMoreSuccess(((JSONObject) result.mData).optBoolean("hasNextPage"), MsgBean.parseList(result.mData));
                 } else {
                     onError(result.mMsg);
                 }
@@ -121,7 +78,7 @@ public class ActRecord extends BaseActivity implements BaseQuickAdapter.RequestL
             @Override
             public void onError(String error) {
                 showShortToast(error + "");
-                mRvRecord.mAdapter.loadMoreFail();
+                mRvMsg.onLoadMoreFail();
             }
 
             @Override
@@ -132,10 +89,10 @@ public class ActRecord extends BaseActivity implements BaseQuickAdapter.RequestL
     }
 
     private void initView() {
-        setToolbarTitle("垃圾历史");
+        setToolbarTitle("我的消息");
         enableBackFinish();
-        mRvRecord = (RvRecord) findViewById(R.id.rv_record);
-        mRvRecord.mAdapter.setOnLoadMoreListener(this);
+        mRvMsg = (RvMsg) findViewById(R.id.rv_msg);
+        mRvMsg.mAdapter.setOnLoadMoreListener(this);
 
         mSrl = (SwipeRefreshLayout) findViewById(R.id.srl);
         mSrl.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -145,13 +102,13 @@ public class ActRecord extends BaseActivity implements BaseQuickAdapter.RequestL
             }
         });
 
-        mRvRecord.addOnItemTouchListener(new OnItemClickListener() {
+        mRvMsg.addOnItemTouchListener(new OnItemClickListener() {
             @Override
             public void onSimpleItemClick(BaseQuickAdapter adapter, View view, int position) {
-                ActRecordDetail.startActivity(ActRecord.this, ((RecordBean) adapter.getItem(position)).mWasteId);
+                ActMsgDetail.startActivity(ActMsg.this, (MsgBean) adapter.getItem(position));
             }
         });
-        mRvRecord.setOnEmptyViewClickListener(new View.OnClickListener() {
+        mRvMsg.setOnEmptyViewClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 getDataOrRefresh();
@@ -160,6 +117,6 @@ public class ActRecord extends BaseActivity implements BaseQuickAdapter.RequestL
     }
 
     public static void startActivity(Context context) {
-        context.startActivity(new Intent(context, ActRecord.class));
+        context.startActivity(new Intent(context, ActMsg.class));
     }
 }
