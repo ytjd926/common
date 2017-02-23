@@ -46,27 +46,6 @@ public abstract class RvBase<T> extends RecyclerView {
         return new CustomAdapter(customSetItemLayoutId());
     }
 
-    public void showLoadingView() {
-        mAdapter.setEmptyView(mLoadingView);
-    }
-
-    public void showEmptyView() {
-        mAdapter.setEmptyView(mEmptyView);
-    }
-
-    public void showErrorView() {
-        mAdapter.setEmptyView(mErrorView);
-    }
-
-    public void setOnEmptyViewClickListener(OnClickListener listener) {
-        mEmptyView.setOnClickListener(listener);
-        mErrorView.setOnClickListener(listener);
-    }
-
-    public void clearEmptyView() {
-        mAdapter.setEmptyView(new View(getContext()));
-    }
-
     public abstract LayoutManager customSetLayoutManager(Context context);
 
     public abstract int customSetItemLayoutId();
@@ -75,6 +54,10 @@ public abstract class RvBase<T> extends RecyclerView {
 
     public void setData(List<T> data) {
         mAdapter.setNewData(data);
+    }
+
+    public void addData(List<T> data) {
+        mAdapter.addData(data);
     }
 
     public BaseQuickAdapter<T, BaseViewHolder> mAdapter;
@@ -88,6 +71,74 @@ public abstract class RvBase<T> extends RecyclerView {
         @Override
         protected void convert(BaseViewHolder baseViewHolder, T t) {
             customConvert(baseViewHolder, t);
+        }
+    }
+
+    public void showLoadingView() {
+        mAdapter.setEmptyView(mLoadingView);
+    }
+
+    public void showEmptyView() {
+        mAdapter.setEmptyView(mEmptyView);
+    }
+
+    public void showErrorView() {
+        mAdapter.setEmptyView(mErrorView);
+    }
+
+    public void clearEmptyView() {
+        mAdapter.setEmptyView(new View(getContext()));
+    }
+
+    public void setOnEmptyViewClickListener(OnClickListener listener) {
+        mEmptyView.setOnClickListener(listener);
+        mErrorView.setOnClickListener(listener);
+    }
+
+    public void onGetDataSuccess(List<T> beans) {
+        if (beans == null) {
+            showErrorView();
+        } else if (beans.size() == 0) {
+            showEmptyView();
+        } else {
+            setData(beans);
+            clearEmptyView();
+        }
+    }
+
+    public void onGetDataSuccess(boolean hasMore, List<T> beans) {
+        setHasMore(hasMore);
+        onGetDataSuccess(beans);
+    }
+
+    public void onGetDataFail() {
+        showErrorView();
+    }
+
+    public void onLoadMoreSuccess(List<T> beans) {
+        if (beans == null || beans.size() == 0) {
+            // onError("没有更多数据");
+            mAdapter.loadMoreFail();
+        } else {
+            addData(beans);
+            mAdapter.loadMoreComplete();
+        }
+    }
+
+    public void onLoadMoreSuccess(boolean hasMore, List<T> beans) {
+        setHasMore(hasMore);
+        onLoadMoreSuccess(beans);
+    }
+
+    public void onLoadMoreFail() {
+        mAdapter.loadMoreFail();
+    }
+
+    public void setHasMore(boolean hasMore) {
+        if (hasMore) {
+            mAdapter.loadMoreEnd(false);
+        } else {
+            mAdapter.loadMoreEnd(true);
         }
     }
 }
