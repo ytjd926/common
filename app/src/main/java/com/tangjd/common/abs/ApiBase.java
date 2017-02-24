@@ -55,6 +55,7 @@ public class ApiBase {
                 Log.i(TAG, url + "\n params " + (params == null ? null : params.toString()) + "\n resp " + response);
                 Log.w(TAG, "----------------");
                 if (listener != null) {
+                    listener.onFinish(true);
                     listener.onResponse(response);
                 }
             }
@@ -66,6 +67,7 @@ public class ApiBase {
                 Log.e(TAG, url + "\n params " + (params == null ? null : params.toString()) + "\n error " + error);
                 Log.w(TAG, "----------------");
                 if (listener != null) {
+                    listener.onFinish(false);
                     listener.onError(parseVolleyError(error));
                 }
             }
@@ -86,6 +88,8 @@ public class ApiBase {
         void onResponse(String response);
 
         void onError(String error);
+
+        void onFinish(boolean withOutException);
     }
 
     private static String parseVolleyError(VolleyError error) {
