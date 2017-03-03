@@ -148,11 +148,11 @@ public class BaseActivity extends AppCompatActivity {
     // Dialog
     // ------ Start ------
     public void showTipDialog(String message) {
-        showTipDialog(message, null);
+        showTipDialog(message, true, null);
     }
 
     public void showTipDialog(String message, DialogInterface.OnClickListener onPositiveClick) {
-        showTipDialog(message, true, onPositiveClick);
+        showTipDialog(message, false, onPositiveClick);
     }
 
     public void showTipDialog(String message, boolean cancelable, DialogInterface.OnClickListener onPositiveClick) {
