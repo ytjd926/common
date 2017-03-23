@@ -2,19 +2,12 @@ package com.tangjd.common.utils;
 
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Point;
 import android.os.Build.VERSION_CODES;
 import android.os.Environment;
-import android.text.TextUtils;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -59,6 +52,33 @@ public class FileUtil {
     public static String readFromFile(String filePath) {
         File file = new File(filePath);
         if (!file.exists()) {
+            return null;
+        }
+        String ret = "";
+        InputStream inputStream = null;
+        InputStreamReader inputStreamReader = null;
+        BufferedReader bufferedReader = null;
+        try {
+            inputStream = new FileInputStream(file);
+            inputStreamReader = new InputStreamReader(inputStream);
+            bufferedReader = new BufferedReader(inputStreamReader);
+            String receiveString = "";
+            StringBuilder stringBuilder = new StringBuilder();
+            while ((receiveString = bufferedReader.readLine()) != null) {
+                stringBuilder.append(receiveString);
+            }
+            ret = stringBuilder.toString();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            IOUtil.close(bufferedReader, inputStreamReader, inputStream);
+        }
+
+        return ret;
+    }
+
+    public static String readFromFile(File file) {
+        if (file == null || !file.exists()) {
             return null;
         }
         String ret = "";
