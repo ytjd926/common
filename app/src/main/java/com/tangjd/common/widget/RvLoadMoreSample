@@ -42,6 +42,9 @@ public class ActMsg extends BaseActivity implements BaseQuickAdapter.RequestLoad
                 Result result = Result.parse(response);
                 if (result.isSuccess()) {
                     mRvMsg.onGetDataSuccess(((JSONObject) result.mData).optBoolean("hasNextPage"), MsgBean.parseList(result.mData));
+                    if(((JSONObject) result.mData).optBoolean("hasNextPage")) {
+                        mRvMsg.mAdapter.setOnLoadMoreListener(this);
+                    }
                 } else {
                     onError(result.mMsg);
                 }
@@ -92,7 +95,6 @@ public class ActMsg extends BaseActivity implements BaseQuickAdapter.RequestLoad
         setToolbarTitle("我的消息");
         enableBackFinish();
         mRvMsg = (RvMsg) findViewById(R.id.rv_msg);
-        mRvMsg.mAdapter.setOnLoadMoreListener(this);
 
         mSrl = (SwipeRefreshLayout) findViewById(R.id.srl);
         mSrl.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
