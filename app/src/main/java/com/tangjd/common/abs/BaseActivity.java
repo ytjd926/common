@@ -3,7 +3,6 @@ package com.tangjd.common.abs;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -102,7 +101,7 @@ public class BaseActivity extends AppCompatActivity {
         getToolbar();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        getToolbar().setNavigationIcon(R.mipmap.ic_menu_back);
+        getToolbar().setNavigationIcon(R.drawable.ic_menu_back);
     }
     // ------ End ------
 

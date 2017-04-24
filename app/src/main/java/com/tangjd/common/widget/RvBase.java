@@ -50,7 +50,7 @@ public abstract class RvBase<T> extends RecyclerView {
 
     public abstract int customSetItemLayoutId();
 
-    public abstract void customConvert(BaseViewHolder holder, T t);
+    public abstract void customConvert(BaseViewHolder holder, T bean);
 
     public void setData(List<T> data) {
         mAdapter.setNewData(data);
