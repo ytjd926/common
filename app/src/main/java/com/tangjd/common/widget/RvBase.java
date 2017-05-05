@@ -11,6 +11,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.tangjd.common.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -54,6 +55,12 @@ public abstract class RvBase<T> extends RecyclerView {
 
     public void setData(List<T> data) {
         mAdapter.setNewData(data);
+    }
+
+    public void addData(T bean) {
+        List<T> newData = new ArrayList<>();
+        newData.add(bean);
+        addData(newData);
     }
 
     public void addData(List<T> data) {

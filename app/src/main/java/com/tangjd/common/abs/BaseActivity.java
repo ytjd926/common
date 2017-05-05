@@ -220,8 +220,12 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public void dismissProgressDialog() {
-        if (mProgressDialog != null && mProgressDialog.isShowing()) {
-            mProgressDialog.cancel();
+        try {
+            if (mProgressDialog != null && mProgressDialog.isShowing()) {
+                mProgressDialog.cancel();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
     // ------ End ------
