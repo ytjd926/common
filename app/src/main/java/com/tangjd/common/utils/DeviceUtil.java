@@ -82,7 +82,7 @@ public class DeviceUtil {
         String serialnum = null;
         try {
             Class<?> c = Class.forName("android.os.SystemProperties");
-            Method get = c.getMethod("get", new Class[]{String.class, String.class});
+            Method get = c.getMethod("instance", new Class[]{String.class, String.class});
             serialnum = (String) get.invoke(c, new Object[]{"ro.serialno", "unknown"});
         } catch (Exception ignored) {
             serialnum = null;

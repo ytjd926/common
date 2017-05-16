@@ -2,6 +2,7 @@ package com.tangjd.common.abs;
 
 import android.text.TextUtils;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -45,7 +46,15 @@ public class JsonApiBase {
         return doRequest(Request.Method.POST, url, params, listener);
     }
 
+    public static Request doPostRequest(String url, JSONObject params, Map<String, String> headers, OnJsonResponseListener listener) {
+        return doRequest(Request.Method.POST, url, params, headers, listener);
+    }
+
     private static Request doRequest(int method, final String url, final JSONObject params, final OnJsonResponseListener listener) {
+        return doRequest(method, url, params, null, listener);
+    }
+
+    public static Request doRequest(int method, final String url, final JSONObject params, final Map<String, String> headers, final OnJsonResponseListener listener) {
         if (TextUtils.isEmpty(url)) {
             return null;
         }
@@ -53,7 +62,10 @@ public class JsonApiBase {
             @Override
             public void onResponse(JSONObject response) {
                 Log.w(TAG, "----------------");
-                Log.i(TAG, url + "\n params " + (params == null ? null : params.toString()) + "\n resp " + response);
+                Log.i(TAG, url
+                        + "\n headers " + (headers == null ? null : headers.toString())
+                        + "\n params " + (params == null ? null : params.toString())
+                        + "\n resp " + response);
                 Log.w(TAG, "----------------");
                 if (listener != null) {
                     listener.onFinish(true);
@@ -64,14 +76,25 @@ public class JsonApiBase {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.w(TAG, "----------------");
-                Log.e(TAG, url + "\n params " + (params == null ? null : params.toString()) + "\n error " + error);
+                Log.e(TAG, url
+                        + "\n headers " + (headers == null ? null : headers.toString())
+                        + "\n params " + (params == null ? null : params.toString())
+                        + "\n error " + error);
                 Log.w(TAG, "----------------");
                 if (listener != null) {
                     listener.onFinish(false);
                     listener.onError(parseVolleyError(error));
                 }
             }
-        });
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                if (headers == null) {
+                    return super.getHeaders();
+                }
+                return headers;
+            }
+        };
         VolleyManager.getInstance().getRequestQueue().add(request);
         return request;
     }

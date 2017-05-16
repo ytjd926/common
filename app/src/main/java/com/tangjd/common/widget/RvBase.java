@@ -3,9 +3,11 @@ package com.tangjd.common.widget;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -41,6 +43,33 @@ public abstract class RvBase<T> extends RecyclerView {
         mLoadingView = LayoutInflater.from(context).inflate(R.layout.rv_loading_layout, this, false);
         mEmptyView = LayoutInflater.from(context).inflate(R.layout.rv_empty_data_layout, this, false);
         mErrorView = LayoutInflater.from(context).inflate(R.layout.rv_error_layout, this, false);
+    }
+
+    public void setEmptyViewText(String content) {
+        if (!TextUtils.isEmpty(content)) {
+            TextView textView = ((TextView) mEmptyView.findViewById(R.id.tv_msg));
+            if (textView != null) {
+                textView.setText(content);
+            }
+        }
+    }
+
+    public void setLoadingViewText(String content) {
+        if (!TextUtils.isEmpty(content)) {
+            TextView textView = ((TextView) mLoadingView.findViewById(R.id.tv_msg));
+            if (textView != null) {
+                textView.setText(content);
+            }
+        }
+    }
+
+    public void setErrorViewText(String content) {
+        if (!TextUtils.isEmpty(content)) {
+            TextView textView = ((TextView) mErrorView.findViewById(R.id.tv_msg));
+            if (textView != null) {
+                textView.setText(content);
+            }
+        }
     }
 
     public BaseQuickAdapter<T, BaseViewHolder> instanceCustomAdapter() {

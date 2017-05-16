@@ -52,7 +52,7 @@ import java.util.Set;
 /**
  * This class handles disk and memory caching of bitmaps in conjunction with the
  * {@link ImageWorker} class and its subclasses. Use
- * {@link ImageCache#getInstance(android.support.v4.app.FragmentManager, ImageCacheParams)} to get an instance of this
+ * {@link ImageCache#getInstance(android.support.v4.app.FragmentManager, ImageCacheParams)} to instance an instance of this
  * class, although usually a cache should be added directly to an {@link ImageWorker} by calling
  * {@link ImageWorker#addImageCache(android.support.v4.app.FragmentManager, ImageCacheParams)}.
  */
@@ -344,7 +344,7 @@ public class ImageCache {
     /**
      * Get from memory cache.
      *
-     * @param data Unique identifier for which item to get
+     * @param data Unique identifier for which item to instance
      * @return The bitmap drawable if found in cache, null otherwise
      */
     public BitmapDrawable getBitmapFromMemCache(String data) {
@@ -366,7 +366,7 @@ public class ImageCache {
     /**
      * Get from disk cache.
      *
-     * @param cacheKey Unique identifier for which item to get
+     * @param cacheKey Unique identifier for which item to instance
      * @return The bitmap if found in cache, null otherwise
      */
     public Bitmap getBitmapFromDiskCache(String cacheKey) {
