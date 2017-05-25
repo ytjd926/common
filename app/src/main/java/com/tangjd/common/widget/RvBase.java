@@ -33,6 +33,7 @@ public abstract class RvBase<T> extends RecyclerView {
     public RvBase(Context context, @Nullable AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init(context);
+        setOverScrollMode(RecyclerView.OVER_SCROLL_NEVER);
     }
 
     public void init(Context context) {
