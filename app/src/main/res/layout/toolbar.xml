@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/toolbar"
     android:layout_width="match_parent"
-    android:layout_height="?attr/actionBarSize"
+    android:layout_height="@dimen/btn_height"
     android:background="@color/toolbar_bg_color"
     app:theme="@style/ToolbarTheme">
 
@@ -14,7 +14,7 @@
         android:layout_gravity="center"
         android:singleLine="true"
         android:textColor="@color/toolbar_title_color"
-        android:textSize="17sp" />
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/toolbar_left_menu"
