@@ -46,7 +46,10 @@ public abstract class RvBase<T> extends RecyclerView {
         mErrorView = LayoutInflater.from(context).inflate(R.layout.rv_error_layout, this, false);
     }
 
-    public void setEmptyViewText(String content) {
+    public void setEmptyViewText(String content, boolean withRetryTip) {
+        if (withRetryTip) {
+            content = content + "\n点击屏幕重试";
+        }
         if (!TextUtils.isEmpty(content)) {
             TextView textView = ((TextView) mEmptyView.findViewById(R.id.tv_msg));
             if (textView != null) {
@@ -64,12 +67,13 @@ public abstract class RvBase<T> extends RecyclerView {
         }
     }
 
-    public void setErrorViewText(String content) {
-        if (!TextUtils.isEmpty(content)) {
-            TextView textView = ((TextView) mErrorView.findViewById(R.id.tv_msg));
-            if (textView != null) {
-                textView.setText(content);
-            }
+    public void setErrorViewText(String content, boolean withRetryTip) {
+        if (withRetryTip) {
+            content = content + "\n点击屏幕重试";
+        }
+        TextView textView = ((TextView) mErrorView.findViewById(R.id.tv_msg));
+        if (textView != null) {
+            textView.setText(content);
         }
     }
 
@@ -85,6 +89,9 @@ public abstract class RvBase<T> extends RecyclerView {
 
     public void setData(List<T> data) {
         mAdapter.setNewData(data);
+        if (data == null || data.size() == 0) {
+            showEmptyView();
+        }
     }
 
     public void addData(T bean) {
@@ -119,7 +126,22 @@ public abstract class RvBase<T> extends RecyclerView {
         mAdapter.setEmptyView(mEmptyView);
     }
 
-    public void showErrorView() {
+//    public void showErrorView() {
+//        mAdapter.setEmptyView(mErrorView);
+//    }
+
+    public void showLoadingView(String content) {
+        setLoadingViewText(content);
+        mAdapter.setEmptyView(mLoadingView);
+    }
+
+    public void showEmptyView(String content, boolean withRetryTip) {
+        setEmptyViewText(content, withRetryTip);
+        mAdapter.setEmptyView(mEmptyView);
+    }
+
+    public void showErrorView(String content, boolean withRetryTip) {
+        setErrorViewText(content, withRetryTip);
         mAdapter.setEmptyView(mErrorView);
     }
 
@@ -134,7 +156,7 @@ public abstract class RvBase<T> extends RecyclerView {
 
     public void onGetDataSuccess(List<T> beans) {
         if (beans == null) {
-            showErrorView();
+            showErrorView("数据出错", true);
         } else if (beans.size() == 0) {
             showEmptyView();
         } else {
@@ -148,13 +170,20 @@ public abstract class RvBase<T> extends RecyclerView {
         onGetDataSuccess(beans);
     }
 
-    public void onGetDataFail() {
-        showErrorView();
+    public void onGetDataSuccess(boolean hasMore, List<T> beans, BaseQuickAdapter.RequestLoadMoreListener loadMoreListener) {
+        setHasMore(hasMore);
+        onGetDataSuccess(beans);
+        if (hasMore) {
+            mAdapter.setOnLoadMoreListener(loadMoreListener);
+        }
+    }
+
+    public void onGetDataFail(String content, boolean withRetryTip) {
+        showErrorView(content, withRetryTip);
     }
 
     public void onLoadMoreSuccess(List<T> beans) {
         if (beans == null || beans.size() == 0) {
-            // onError("没有更多数据");
             mAdapter.loadMoreFail();
         } else {
             addData(beans);
