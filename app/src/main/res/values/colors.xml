@@ -7,6 +7,7 @@
     <color name="transparent_half_2">#20000000</color>
 
     <color name="light_gray_line">#DCDCDC</color>
+    <color name="light_gray_line_light">#FAFAFA</color>
 
     <color name="light_black_a">#AAAAAA</color>
     <color name="light_black_9">#999999</color>
