@@ -3,10 +3,10 @@ package com.tangjd.common.abs;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -109,18 +109,22 @@ public class BaseActivity extends AppCompatActivity {
     // ------ Start ------
     private Toast mToast;
 
+    private Toast getToast() {
+        if (mToast == null) {
+            mToast = Toast.makeText(this, "", Toast.LENGTH_SHORT);
+        }
+        return mToast;
+    }
+
     public void showToast() {
         showToast("加载中...");
     }
 
     public void showToast(String message) {
         if (!isFinishing()) {
-            if (mToast == null) {
-                mToast = Toast.makeText(this, message, Toast.LENGTH_LONG);
-                mToast.setGravity(Gravity.CENTER, 0, 0);
-            }
-            mToast.setText(message);
-            mToast.show();
+            getToast().setText(message);
+            getToast().setDuration(Toast.LENGTH_LONG);
+            getToast().show();
         }
     }
 
@@ -132,13 +136,17 @@ public class BaseActivity extends AppCompatActivity {
 
     public void showShortToast(String message) {
         if (!isFinishing()) {
-            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+            getToast().setText(message);
+            getToast().setDuration(Toast.LENGTH_SHORT);
+            getToast().show();
         }
     }
 
     public void showLongToast(String message) {
         if (!isFinishing()) {
-            Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+            getToast().setText(message);
+            getToast().setDuration(Toast.LENGTH_LONG);
+            getToast().show();
         }
     }
 
@@ -190,6 +198,57 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
     // ------ End ------
+
+    // Snackbar
+    // ------ Start ------
+    private Snackbar mSnackbar;
+
+    private Snackbar getSnackbar() {
+        if (mSnackbar == null) {
+            mSnackbar = Snackbar.make(getWindow().getDecorView(), "", Snackbar.LENGTH_SHORT);
+        }
+        return mSnackbar;
+    }
+
+    public void showShortSnackbar(String content) {
+        if (!isFinishing()) {
+            getSnackbar().setText(content);
+            getSnackbar().setDuration(Snackbar.LENGTH_SHORT);
+            getSnackbar().show();
+        }
+    }
+
+    public void showLongSnackbar(String content) {
+        if (!isFinishing()) {
+            getSnackbar().setText(content);
+            getSnackbar().setDuration(Snackbar.LENGTH_LONG);
+            getSnackbar().show();
+        }
+    }
+
+    public void showActionLongSnackbar(String content, String actionText, View.OnClickListener listener) {
+        if (!isFinishing()) {
+            getSnackbar().setText(content);
+            getSnackbar().setDuration(Snackbar.LENGTH_LONG);
+            getSnackbar().setAction(actionText, listener);
+            getSnackbar().show();
+        }
+    }
+
+    public void showActionIndefiniteSnackbar(String content, String actionText, View.OnClickListener listener) {
+        if (!isFinishing()) {
+            getSnackbar().setText(content);
+            getSnackbar().setDuration(Snackbar.LENGTH_INDEFINITE);
+            getSnackbar().setAction(actionText, listener);
+            getSnackbar().show();
+        }
+    }
+
+    public void dismissSnackbar() {
+        if (!isFinishing() && mSnackbar != null && mSnackbar.isShown()) {
+            mSnackbar.dismiss();
+        }
+    }
 
     // ProgressDialog
     // ------ Start ------
