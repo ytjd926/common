@@ -155,12 +155,12 @@ public abstract class RvBase<T> extends RecyclerView {
     }
 
     public void onGetDataSuccess(List<T> beans) {
+        setData(beans);
         if (beans == null) {
             showErrorView("数据出错", true);
         } else if (beans.size() == 0) {
             showEmptyView();
         } else {
-            setData(beans);
             clearEmptyView();
         }
     }

@@ -3,10 +3,12 @@ package com.tangjd.common.abs;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.support.annotation.LayoutRes;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,6 +25,19 @@ import com.tangjd.common.R;
  * Created by tangjd on 2015/12/14.
  */
 public class BaseActivity extends AppCompatActivity {
+    public View mContentView;
+
+    @Override
+    public void setContentView(@LayoutRes int layoutResID) {
+        setContentView(LayoutInflater.from(this).inflate(layoutResID, null, false));
+    }
+
+    @Override
+    public void setContentView(View view) {
+        mContentView = view;
+        super.setContentView(view);
+    }
+
     // Permission
     // ------ Start ------
     @Override
@@ -205,7 +220,7 @@ public class BaseActivity extends AppCompatActivity {
 
     private Snackbar getSnackbar() {
         if (mSnackbar == null) {
-            mSnackbar = Snackbar.make(getWindow().getDecorView(), "", Snackbar.LENGTH_SHORT);
+            mSnackbar = Snackbar.make(mContentView, "", Snackbar.LENGTH_SHORT);
         }
         return mSnackbar;
     }
@@ -249,6 +264,7 @@ public class BaseActivity extends AppCompatActivity {
             mSnackbar.dismiss();
         }
     }
+    // ------ End ------
 
     // ProgressDialog
     // ------ Start ------
