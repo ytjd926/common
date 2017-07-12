@@ -23,10 +23,14 @@ public class JsonApiBase {
     public static final String TAG = "Api";
 
     public static Request doGetRequest(String url, OnJsonResponseListener listener) {
-        return doRequest(Request.Method.GET, url, null, listener);
+        return doGetRequest(url, null, null, listener);
     }
 
     public static Request doGetRequest(String url, Map<String, String> params, OnJsonResponseListener listener) {
+        return doGetRequest(url, params, null, listener);
+    }
+
+    public static Request doGetRequest(String url, Map<String, String> params, Map<String, String> headers, OnJsonResponseListener listener) {
         if (params != null && params.size() != 0) {
             String paramsStr = "";
             for (Map.Entry<String, String> entry : params.entrySet()) {
@@ -39,7 +43,7 @@ public class JsonApiBase {
             paramsStr = paramsStr.substring(0, paramsStr.length() - 1);
             url = url + "?" + paramsStr;
         }
-        return doGetRequest(url, listener);
+        return doRequest(Request.Method.GET, url, null, headers, listener);
     }
 
     public static Request doPostRequest(String url, JSONObject params, OnJsonResponseListener listener) {
