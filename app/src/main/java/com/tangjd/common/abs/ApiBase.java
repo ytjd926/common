@@ -65,11 +65,11 @@ public class ApiBase {
 
                 Log.w(TAG, "----------------");
                 Log.e(TAG, url + "\n params " + (params == null ? null : params.toString()) + "\n error " + error);
-                Log.w(TAG, "----------------");
                 if (listener != null) {
                     listener.onFinish(false);
                     listener.onError(parseVolleyError(error));
                 }
+                Log.w(TAG, "----------------");
             }
         }) {
             @Override
@@ -93,11 +93,12 @@ public class ApiBase {
     }
 
     private static String parseVolleyError(VolleyError error) {
-        error.printStackTrace();
-        String statusCodeStr = "";
-        if (error.networkResponse != null) {
-            statusCodeStr = " " + error.networkResponse.statusCode;
+        try {
+            String errorDataStr = new String(error.networkResponse.data);
+            Log.e(TAG, "errorData " + errorDataStr);
+            return errorDataStr + " " + error.networkResponse.statusCode;
+        } catch (Exception e) {
+            return "连接失败";
         }
-        return "连接失败 " + statusCodeStr;
     }
 }
