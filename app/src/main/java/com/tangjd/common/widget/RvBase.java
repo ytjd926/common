@@ -8,6 +8,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -198,6 +199,11 @@ public abstract class RvBase<T> extends RecyclerView {
 
     public void onLoadMoreFail() {
         mAdapter.loadMoreFail();
+    }
+
+    public void onLoadMoreFail(String error) {
+        mAdapter.loadMoreFail();
+        Toast.makeText(getContext(), error + "", Toast.LENGTH_LONG).show();
     }
 
     public void setHasMore(boolean hasMore) {

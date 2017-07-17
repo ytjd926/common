@@ -41,10 +41,7 @@ public class ActMsg extends BaseActivity implements BaseQuickAdapter.RequestLoad
             public void onResponse(JSONObject response) {
                 Result result = Result.parse(response);
                 if (result.isSuccess()) {
-                    mRvMsg.onGetDataSuccess(((JSONObject) result.mData).optBoolean("hasNextPage"), MsgBean.parseList(result.mData));
-                    if(((JSONObject) result.mData).optBoolean("hasNextPage")) {
-                        mRvMsg.mAdapter.setOnLoadMoreListener(this);
-                    }
+                    mRvMsg.onGetDataSuccess(((JSONObject) result.mData).optBoolean("hasNextPage"), MsgBean.parseList(result.mData), RvLoadMoreSample.this);
                 } else {
                     onError(result.mMsg);
                 }
@@ -52,8 +49,7 @@ public class ActMsg extends BaseActivity implements BaseQuickAdapter.RequestLoad
 
             @Override
             public void onError(String error) {
-                showLongToast(error + "");
-                mRvMsg.onGetDataFail();
+                mRvMsg.onGetDataFail(error, true);
             }
 
             @Override
@@ -80,8 +76,7 @@ public class ActMsg extends BaseActivity implements BaseQuickAdapter.RequestLoad
 
             @Override
             public void onError(String error) {
-                showShortToast(error + "");
-                mRvMsg.onLoadMoreFail();
+                mRvMsg.onLoadMoreFail(error);
             }
 
             @Override
