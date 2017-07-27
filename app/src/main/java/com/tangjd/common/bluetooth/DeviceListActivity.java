@@ -120,7 +120,18 @@ public class DeviceListActivity extends Activity {
         if (pairedDevices.size() > 0) {
             findViewById(R.id.title_paired_devices).setVisibility(View.VISIBLE);
             for (BluetoothDevice device : pairedDevices) {
-                pairedDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+                if (TextUtils.isEmpty(mFilterDeviceNameContains)) {
+                    pairedDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+                    return;
+                }
+                if (TextUtils.isEmpty(device.getName()) || device.getName().equalsIgnoreCase("null")) {
+                    pairedDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+                    return;
+                }
+                if (device.getName().toLowerCase().contains(mFilterDeviceNameContains.toLowerCase())) {
+                    pairedDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+                    return;
+                }
             }
         } else {
             String noDevices = "没有已配对的设备";

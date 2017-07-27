@@ -47,6 +47,7 @@ public abstract class BluetoothBaseActivity extends BaseActivity {
      */
     protected BluetoothChatService mChatService = null;
 
+    public int mConnectStatus;
     @Override
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
@@ -256,6 +257,7 @@ public abstract class BluetoothBaseActivity extends BaseActivity {
             switch (msg.what) {
                 case Constants.MESSAGE_STATE_CHANGE:
                     onBtStateChanged(msg.arg1);
+                    mConnectStatus = msg.arg1;
                     switch (msg.arg1) {
                         case BluetoothChatService.STATE_CONNECTED:
                             setStatus("已连接到 " + mConnectedDeviceName);

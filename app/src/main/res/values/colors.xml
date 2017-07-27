@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!--WeChatStyle-->
+    <!--<color name="colorPrimary">#393A3F</color>-->
+    <!--<color name="colorPrimaryDark">#303135</color>-->
+    <!--<color name="colorAccent">#19AC18</color>-->
+
+    <!--<color name="btnNormal">#19AC18</color>-->
+    <!--<color name="btnPressed">#169A15</color>-->
+
+    <!--<color name="toolbar_menu_color">#FFFFFF</color>-->
+    <!--<color name="toolbar_bg_color">#393A3F</color>-->
+    <!--<color name="toolbar_title_color">#FFFFFF</color>-->
     <color name="colorPrimary">#5DD7DF</color>
     <color name="colorPrimaryDark">#5DD7DF</color>
     <color name="colorAccent">#3BD6C4</color>
@@ -24,6 +35,12 @@
     <color name="light_black_4b">#4B4B4B</color>
     <color name="light_black_3">#333333</color>
 
+    <color name="weChatBtnNormal">#19AC18</color>
+    <color name="weChatBtnPressed">#169A15</color>
+
     <color name="green_we_chat_normal">#19AC18</color>
     <color name="green_we_chat_pressed">#169A15</color>
+
+    <color name="weChatColorPrimary">#393A3F</color>
+    <color name="weChatColorPrimaryDark">#303135</color>
 </resources>
