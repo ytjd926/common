@@ -214,6 +214,17 @@ public class BaseActivity extends AppCompatActivity {
     }
     // ------ End ------
 
+    // SingleChoiceDialog
+    // ------ Start ------
+    public void showSingleChoiceDialog(String[] items, DialogInterface.OnClickListener listener) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setItems(items, listener);
+        if (!isFinishing()) {
+            builder.create().show();
+        }
+    }
+    // ------ End ------
+
     // Snackbar
     // ------ Start ------
     private Snackbar mSnackbar;
