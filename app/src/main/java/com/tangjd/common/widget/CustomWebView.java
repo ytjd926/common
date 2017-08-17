@@ -28,10 +28,10 @@ public class CustomWebView extends WebView {
 
     public CustomWebView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(context);
+        init();
     }
 
-    private void init(Context context) {
+    private void init() {
         setVerticalScrollBarEnabled(false);
         setHorizontalScrollBarEnabled(true);
 
@@ -62,7 +62,7 @@ public class CustomWebView extends WebView {
 
             @Override
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-                showTipDialog("加载错误: \n" + failingUrl + "\n" + description);
+                showTipDialog("加载异常: \n" + failingUrl + "\n" + description);
             }
 
             @Override
