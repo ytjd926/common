@@ -18,6 +18,22 @@ import android.webkit.WebViewClient;
  * Created by tangjd on 2016/8/23.
  */
 public class CustomWebView extends WebView {
+    public interface OnLoadStateChangeListener {
+        void onPageStarted(WebView view, String url, Bitmap favicon);
+
+        void onPageFinished(WebView view, String url);
+
+        void onReceivedError(WebView view, int errorCode, String description, String failingUrl);
+
+        void onJsAlert(WebView view, String url, String message, JsResult result);
+    }
+
+    private OnLoadStateChangeListener mListener;
+
+    public void setOnLoadStateChangeListener(OnLoadStateChangeListener listener) {
+        mListener = listener;
+    }
+
     public CustomWebView(Context context) {
         this(context, null);
     }
@@ -36,9 +52,11 @@ public class CustomWebView extends WebView {
         setHorizontalScrollBarEnabled(true);
 
         setWebChromeClient(new WebChromeClient() {
-
             @Override
-            public boolean onJsAlert(WebView view, String url, String message, final JsResult result) {
+            public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
+                if (mListener != null) {
+                    mListener.onJsAlert(view, url, message, result);
+                }
                 return true;
             }
         });
@@ -48,6 +66,9 @@ public class CustomWebView extends WebView {
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
                 showProgressDialog();
+                if (mListener != null) {
+                    mListener.onPageStarted(view, url, favicon);
+                }
             }
 
             @Override
@@ -58,11 +79,17 @@ public class CustomWebView extends WebView {
                         dismissProgressDialog();
                     }
                 }, 1000);
+                if (mListener != null) {
+                    mListener.onPageFinished(view, url);
+                }
             }
 
             @Override
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
                 showTipDialog("加载异常: \n" + failingUrl + "\n" + description);
+                if (mListener != null) {
+                    mListener.onReceivedError(view, errorCode, description, failingUrl);
+                }
             }
 
             @Override
@@ -105,18 +132,26 @@ public class CustomWebView extends WebView {
     private ProgressDialog mProgressDialog;
 
     public void showProgressDialog() {
-        if (mProgressDialog == null) {
-            mProgressDialog = new ProgressDialog(getContext());
+        try {
+            if (mProgressDialog == null) {
+                mProgressDialog = new ProgressDialog(getContext());
+            }
+            mProgressDialog.setTitle("");
+            mProgressDialog.setCancelable(true);
+            mProgressDialog.setMessage("加载中...");
+            mProgressDialog.show();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        mProgressDialog.setTitle("");
-        mProgressDialog.setCancelable(true);
-        mProgressDialog.setMessage("加载中...");
-        mProgressDialog.show();
     }
 
     public void dismissProgressDialog() {
-        if (mProgressDialog != null && mProgressDialog.isShowing()) {
-            mProgressDialog.cancel();
+        try {
+            if (mProgressDialog != null && mProgressDialog.isShowing()) {
+                mProgressDialog.cancel();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
