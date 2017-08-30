@@ -125,6 +125,8 @@ public class CustomWebView extends WebView {
         settings.setUseWideViewPort(true);
         settings.setGeolocationEnabled(true);
 
+        settings.setSupportZoom(true);
+
         CookieManager.getInstance().setAcceptCookie(true);
     }
 
