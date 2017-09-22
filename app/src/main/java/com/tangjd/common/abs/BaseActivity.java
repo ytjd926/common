@@ -2,6 +2,7 @@ package com.tangjd.common.abs;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.LayoutRes;
 import android.support.design.widget.Snackbar;
@@ -20,6 +21,8 @@ import com.bumptech.glide.DrawableRequestBuilder;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.tangjd.common.R;
+
+import java.io.Serializable;
 
 /**
  * Created by tangjd on 2015/12/14.
@@ -340,6 +343,32 @@ public class BaseActivity extends AppCompatActivity {
                 .error(loadingRes)
                 .fallback(loadingRes)
                 .crossFade();
+    }
+    // ------ End ------
+
+    // StartActivity
+    // ------ Start ------
+    public static String EXTRA_COMMON_DATA_BEAN = "extra_data_bean";
+    public static int REQUEST_CODE_COMMON = 9999;
+
+    public void start(Class<?> cls) {
+        startActivity(new Intent(this, cls));
+    }
+
+    public void start(Class<?> cls, Serializable bean) {
+        Intent intent = new Intent(this, cls);
+        intent.putExtra(EXTRA_COMMON_DATA_BEAN, bean);
+        startActivity(intent);
+    }
+
+    public void startForResult(Class<?> cls) {
+        startActivityForResult(new Intent(this, cls), REQUEST_CODE_COMMON);
+    }
+
+    public void startForResult(Class<?> cls, Serializable bean) {
+        Intent intent = new Intent(this, cls);
+        intent.putExtra(EXTRA_COMMON_DATA_BEAN, bean);
+        startActivityForResult(intent, REQUEST_CODE_COMMON);
     }
     // ------ End ------
 }
