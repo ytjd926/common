@@ -48,6 +48,7 @@ public abstract class BluetoothBaseActivity extends BaseActivity {
     protected BluetoothChatService mChatService = null;
 
     public int mConnectStatus;
+
     @Override
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
@@ -245,7 +246,7 @@ public abstract class BluetoothBaseActivity extends BaseActivity {
             // Reset out string buffer to zero
             mOutStringBuffer.setLength(0);
         }
-
+        Log.e("TTT", "sendMessage " + new String(data));
     }
 
     /**
