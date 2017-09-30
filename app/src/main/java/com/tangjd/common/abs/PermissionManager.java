@@ -45,7 +45,7 @@ public class PermissionManager {
             return true;
         }
         if (activity.shouldShowRequestPermissionRationale(ACCESS_FINE_LOCATION)) {
-            activity.showTipDialog("请允许程序进行精准定位权限", false, new DialogInterface.OnClickListener() {
+            activity.showTipDialog("请允许程序获取定位权限", false, new DialogInterface.OnClickListener() {
                 @Override
                 @TargetApi(Build.VERSION_CODES.M)
                 public void onClick(DialogInterface dialog, int which) {

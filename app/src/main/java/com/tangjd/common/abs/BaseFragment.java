@@ -13,15 +13,14 @@ import android.view.ViewGroup;
  */
 
 public abstract class BaseFragment extends Fragment {
-    private View mLayoutView;
+    protected View mLayoutView;
     protected boolean mDataLoaded = false;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         if (mLayoutView == null) {
-            View view = setContentView();
-            mLayoutView = view;
+            mLayoutView = setContentView(inflater, container);
             initView();
         } else {
             ViewGroup parent = (ViewGroup) mLayoutView.getParent();
@@ -32,7 +31,7 @@ public abstract class BaseFragment extends Fragment {
         return mLayoutView;
     }
 
-    protected abstract View setContentView();
+    protected abstract View setContentView(LayoutInflater inflater, @Nullable ViewGroup container);
 
     protected abstract void initView();
 
