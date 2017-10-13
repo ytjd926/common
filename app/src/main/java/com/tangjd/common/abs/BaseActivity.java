@@ -181,12 +181,16 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public void showTipDialog(String message, boolean cancelable, DialogInterface.OnClickListener onPositiveClick) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(message);
-        builder.setPositiveButton(android.R.string.ok, onPositiveClick);
-        builder.setCancelable(cancelable);
-        if (!isFinishing())
-            builder.create().show();
+        try {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage(message);
+            builder.setPositiveButton(android.R.string.ok, onPositiveClick);
+            builder.setCancelable(cancelable);
+            if (!isFinishing())
+                builder.create().show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void showAlertDialog(String message, DialogInterface.OnClickListener onPositiveClick, DialogInterface.OnClickListener onNegativeClick) {
@@ -206,13 +210,17 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public void showAlertDialog(String message, String positiveText, String negativeText, boolean cancelable, DialogInterface.OnClickListener onPositiveClick, DialogInterface.OnClickListener onNegativeClick) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(message);
-        builder.setCancelable(cancelable);
-        builder.setPositiveButton(positiveText, onPositiveClick);
-        builder.setNegativeButton(negativeText, onNegativeClick);
-        if (!isFinishing()) {
-            builder.create().show();
+        try {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage(message);
+            builder.setCancelable(cancelable);
+            builder.setPositiveButton(positiveText, onPositiveClick);
+            builder.setNegativeButton(negativeText, onNegativeClick);
+            if (!isFinishing()) {
+                builder.create().show();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
     // ------ End ------
@@ -220,10 +228,14 @@ public class BaseActivity extends AppCompatActivity {
     // SingleChoiceDialog
     // ------ Start ------
     public void showSingleChoiceDialog(String[] items, DialogInterface.OnClickListener listener) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setItems(items, listener);
-        if (!isFinishing()) {
-            builder.create().show();
+        try {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setItems(items, listener);
+            if (!isFinishing()) {
+                builder.create().show();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
     // ------ End ------
@@ -351,21 +363,21 @@ public class BaseActivity extends AppCompatActivity {
     public static String EXTRA_COMMON_DATA_BEAN = "extra_data_bean";
     public static int REQUEST_CODE_COMMON = 9999;
 
-    public void start(Class<?> cls) {
+    public void startAct(Class<?> cls) {
         startActivity(new Intent(this, cls));
     }
 
-    public void start(Class<?> cls, Serializable bean) {
+    public void startAct(Class<?> cls, Serializable bean) {
         Intent intent = new Intent(this, cls);
         intent.putExtra(EXTRA_COMMON_DATA_BEAN, bean);
         startActivity(intent);
     }
 
-    public void startForResult(Class<?> cls) {
+    public void startActForResult(Class<?> cls) {
         startActivityForResult(new Intent(this, cls), REQUEST_CODE_COMMON);
     }
 
-    public void startForResult(Class<?> cls, Serializable bean) {
+    public void startActForResult(Class<?> cls, Serializable bean) {
         Intent intent = new Intent(this, cls);
         intent.putExtra(EXTRA_COMMON_DATA_BEAN, bean);
         startActivityForResult(intent, REQUEST_CODE_COMMON);
