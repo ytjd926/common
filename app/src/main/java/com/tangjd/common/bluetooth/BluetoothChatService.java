@@ -256,7 +256,6 @@ public class BluetoothChatService {
     private void connectionFailed() {
         // Start the service over to restart listening mode
         BluetoothChatService.this.start();
-
         setState(STATE_CONNECTION_FAILED);
     }
 

@@ -94,6 +94,14 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
+    public void enableCollapseMenu(Menu menu, String[] menuTitles, MenuItem.OnMenuItemClickListener[] listeners) {
+        getToolbar();
+        for (int i = 0; i < menuTitles.length; i++) {
+            MenuItem menuItem = menu.add(menuTitles[i]);
+            menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
+            menuItem.setOnMenuItemClickListener(listeners[i]);
+        }
+    }
 
     public void enableLeftMenu(String menuTitle, View.OnClickListener listener) {
         enableLeftMenu(menuTitle, 0, listener);

@@ -246,7 +246,7 @@ public abstract class BluetoothBaseActivity extends BaseActivity {
             // Reset out string buffer to zero
             mOutStringBuffer.setLength(0);
         }
-        Log.e("TTT", "sendMessage " + new String(data));
+        Log.e(TAG, "sendMessage " + new String(data));
     }
 
     /**
