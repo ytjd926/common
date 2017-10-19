@@ -172,15 +172,14 @@ public abstract class RawSocketActivity extends BaseActivity {
 
         socket.setEndCallback(new CompletedCallback() {
             @Override
-            public void onCompleted(Exception ex) {
-                if (ex != null) throw new RuntimeException(ex);
+            public void onCompleted(final Exception ex) {
                 Log.e(TAG, "[Client] Successfully end connection");
                 mConnected = false;
                 mSocket = null;
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        onConnectEnd();
+                        onConnectEnd(ex);
                     }
                 });
             }
@@ -191,7 +190,7 @@ public abstract class RawSocketActivity extends BaseActivity {
 
     public abstract void onDataReceived(byte[] data);
 
-    public abstract void onConnectEnd();
+    public abstract void onConnectEnd(Exception ex);
 
     public abstract void onConnectClosed();
 
