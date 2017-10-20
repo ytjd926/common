@@ -57,7 +57,7 @@ public class CustomWebView extends WebView {
                 if (mListener != null) {
                     mListener.onJsAlert(view, url, message, result);
                 }
-                return true;
+                return false;
             }
         });
 
