@@ -156,15 +156,14 @@ public abstract class RawSocketActivity extends BaseActivity {
 
         socket.setClosedCallback(new CompletedCallback() {
             @Override
-            public void onCompleted(Exception ex) {
-                if (ex != null) throw new RuntimeException(ex);
+            public void onCompleted(final Exception ex) {
                 Log.e(TAG, "[Client] Successfully closed connection");
                 mConnected = false;
                 mSocket = null;
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        onConnectClosed();
+                        onConnectClosed(ex);
                     }
                 });
             }
@@ -192,7 +191,7 @@ public abstract class RawSocketActivity extends BaseActivity {
 
     public abstract void onConnectEnd(Exception ex);
 
-    public abstract void onConnectClosed();
+    public abstract void onConnectClosed(Exception ex);
 
     public abstract void onMessageSent(byte[] message);
 
@@ -202,18 +201,27 @@ public abstract class RawSocketActivity extends BaseActivity {
 
     public void sendMessage(final byte[] message) {
         Log.e("TTT", "Sending: " + ByteUtil.ByteArrayToHexString(message));
-        Util.writeAll(mSocket, message, new CompletedCallback() {
-            @Override
-            public void onCompleted(Exception ex) {
-                if (ex != null) throw new RuntimeException(ex);
-                Log.e("TTT", "Sent: " + ByteUtil.ByteArrayToHexString(message));
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        onMessageSent(message);
-                    }
-                });
-            }
-        });
+        if (mConnected = false || mSocket == null) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    showLongSnackbar("连接已断开");
+                }
+            });
+        } else {
+            Util.writeAll(mSocket, message, new CompletedCallback() {
+                @Override
+                public void onCompleted(Exception ex) {
+                    if (ex != null) throw new RuntimeException(ex);
+                    Log.e("TTT", "Sent: " + ByteUtil.ByteArrayToHexString(message));
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            onMessageSent(message);
+                        }
+                    });
+                }
+            });
+        }
     }
 }

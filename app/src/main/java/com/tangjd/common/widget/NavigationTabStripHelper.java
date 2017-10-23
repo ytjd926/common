@@ -8,6 +8,7 @@ import android.util.SparseArray;
 
 import com.gigamole.navigationtabstrip.NavigationTabStrip;
 import com.tangjd.common.abs.BaseActivity;
+import com.tangjd.common.abs.BaseFragment;
 
 /**
  * Author: tangjd
@@ -41,13 +42,15 @@ public class NavigationTabStripHelper {
 //        NavigationTabStripHelper.set(this, tabStrip, viewPager,
 //            new String[]{FragmentSimple.class.getName(), FragmentPro.class.getName()},
 //            null);
-////        viewPager.post(new Runnable() {
-////            @Override
-////            public void run() {
-////                ((BaseFragment) ((FragmentPagerAdapter) viewPager.getAdapter()).getItem(0)).getDataIfNeeded();
-////            }
-////        });
-    public static void set(final BaseActivity context, NavigationTabStrip tabStrip, ViewPager viewPager, final String[] fragmentNameArr, final Bundle bundle) {
+//        viewPager.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                ((BaseFragment) ((FragmentPagerAdapter) viewPager.getAdapter()).getItem(0)).getDataIfNeeded();
+//            }
+//        });
+
+    public static void set(final BaseActivity context, NavigationTabStrip tabStrip, final ViewPager viewPager, String[] titles, final String[] baseFragmentNameArr, final Bundle bundle) {
+        tabStrip.setTitles(titles);
         viewPager.setAdapter(new FragmentPagerAdapter(context.getSupportFragmentManager()) {
             private SparseArray<Fragment> mFragments = new SparseArray<>();
 
@@ -55,7 +58,7 @@ public class NavigationTabStripHelper {
             public Fragment getItem(int position) {
                 Fragment fragment = mFragments.get(position);
                 if (fragment == null) {
-                    fragment = Fragment.instantiate(context, fragmentNameArr[position], bundle);
+                    fragment = Fragment.instantiate(context, baseFragmentNameArr[position], bundle);
                     mFragments.put(position, fragment);
                 }
                 return fragment;
@@ -63,9 +66,80 @@ public class NavigationTabStripHelper {
 
             @Override
             public int getCount() {
-                return fragmentNameArr.length;
+                return baseFragmentNameArr.length;
             }
         });
         tabStrip.setViewPager(viewPager);
+        viewPager.post(new Runnable() {
+            @Override
+            public void run() {
+                ((BaseFragment) ((FragmentPagerAdapter) viewPager.getAdapter()).getItem(0)).getDataIfNeeded();
+            }
+        });
+        viewPager.addOnPageChangeListener(
+                new ViewPager.OnPageChangeListener() {
+                    @Override
+                    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+                    }
+
+                    @Override
+                    public void onPageSelected(int position) {
+                        ((BaseFragment) ((FragmentPagerAdapter) viewPager.getAdapter()).getItem(position)).getDataIfNeeded();
+                    }
+
+                    @Override
+                    public void onPageScrollStateChanged(int state) {
+
+                    }
+                }
+        );
+    }
+
+    @Deprecated
+    public static void set(final BaseActivity context, NavigationTabStrip tabStrip, final ViewPager viewPager, final String[] baseFragmentNameArr, final Bundle bundle) {
+        viewPager.setAdapter(new FragmentPagerAdapter(context.getSupportFragmentManager()) {
+            private SparseArray<Fragment> mFragments = new SparseArray<>();
+
+            @Override
+            public Fragment getItem(int position) {
+                Fragment fragment = mFragments.get(position);
+                if (fragment == null) {
+                    fragment = Fragment.instantiate(context, baseFragmentNameArr[position], bundle);
+                    mFragments.put(position, fragment);
+                }
+                return fragment;
+            }
+
+            @Override
+            public int getCount() {
+                return baseFragmentNameArr.length;
+            }
+        });
+        tabStrip.setViewPager(viewPager);
+        viewPager.post(new Runnable() {
+            @Override
+            public void run() {
+                ((BaseFragment) ((FragmentPagerAdapter) viewPager.getAdapter()).getItem(0)).getDataIfNeeded();
+            }
+        });
+        viewPager.addOnPageChangeListener(
+                new ViewPager.OnPageChangeListener() {
+                    @Override
+                    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+                    }
+
+                    @Override
+                    public void onPageSelected(int position) {
+                        ((BaseFragment) ((FragmentPagerAdapter) viewPager.getAdapter()).getItem(position)).getDataIfNeeded();
+                    }
+
+                    @Override
+                    public void onPageScrollStateChanged(int state) {
+
+                    }
+                }
+        );
     }
 }
