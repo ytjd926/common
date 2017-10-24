@@ -201,11 +201,12 @@ public abstract class RawSocketActivity extends BaseActivity {
 
     public void sendMessage(final byte[] message) {
         Log.e("TTT", "Sending: " + ByteUtil.ByteArrayToHexString(message));
-        if (mConnected = false || mSocket == null) {
+        if (hasNoConnection()) {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     showLongSnackbar("连接已断开");
+                    mConnected = false;
                 }
             });
         } else {
@@ -223,5 +224,9 @@ public abstract class RawSocketActivity extends BaseActivity {
                 }
             });
         }
+    }
+
+    public boolean hasNoConnection() {
+        return !mConnected || mSocket == null;
     }
 }
