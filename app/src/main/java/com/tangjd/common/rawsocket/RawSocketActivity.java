@@ -130,7 +130,10 @@ public abstract class RawSocketActivity extends BaseActivity {
         AsyncServer.getDefault().connectSocket(new InetSocketAddress(address, port), new ConnectCallback() {
             @Override
             public void onConnectCompleted(Exception ex, final AsyncSocket socket) {
-                if (ex != null) throw new RuntimeException(ex);
+                if (ex != null) {
+                    onConnectFailed(ex);
+                    return;
+                }
                 mConnected = true;
                 mSocket = socket;
                 setCallBacks(socket);
@@ -186,6 +189,8 @@ public abstract class RawSocketActivity extends BaseActivity {
     }
 
     public abstract void onConnected();
+
+    public abstract void onConnectFailed(Exception ex);
 
     public abstract void onDataReceived(byte[] data);
 
