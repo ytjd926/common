@@ -17,7 +17,7 @@ public class DownloadTask implements Runnable {
     private File mFile;
     private DownloadListener mDownloadListener;
 
-//	private long mTotalSize = 0;
+    private long mTotalSize = 0;
 
     public DownloadTask(String url, File file) {
         mUrl = url;
@@ -33,7 +33,7 @@ public class DownloadTask implements Runnable {
     @Override
     public void run() {
         if (mFile.exists()) {
-            onComplete();
+            onFileExists(mFile);
             return;
         }
         try {
@@ -49,7 +49,6 @@ public class DownloadTask implements Runnable {
      */
     private void loadFromNetwork(String urlString) throws IOException {
         InputStream stream = null;
-
         try {
             stream = downloadUrl(urlString);
             if (stream != null) {
@@ -57,7 +56,11 @@ public class DownloadTask implements Runnable {
             }
         } finally {
             if (stream != null) {
-                stream.close();
+                try {
+                    stream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -78,14 +81,33 @@ public class DownloadTask implements Runnable {
         conn.setConnectTimeout(15000 /* milliseconds */);
         conn.setRequestMethod("GET");
         conn.setDoInput(true);
+        /**
+         * By default this implementation of HttpURLConnection requests that servers use gzip compression.
+         * Since getContentLength() returns the number of bytes transmitted,
+         * you cannot use that method to predict how many bytes can be read from getInputStream().
+         * Instead, read that stream until it is exhausted: when read() returns -1.
+         * Gzip compression can be disabled by setting the acceptable encodings in the request header。
+
+         * 在默认情况下，HttpURLConnection 使用 gzip方式获取，文件 getContentLength() 这个方法，
+         * 每次read完成后可以获得，当前已经传送了多少数据，而不能用这个方法获取 需要传送多少字节的内容，
+         * 当read() 返回 -1时，读取完成，由于这个压缩后的总长度我无法获取，那么进度条就没法计算值了。
+         * 要取得长度则，要求http请求不要gzip压缩。
+         */
+        conn.setRequestProperty("Accept-Encoding", "identity");
+        /**
+         * 若setRequestProperty("Accept-Encoding", "identity")失败，加上User-agent伪装成浏览器，一般就行了
+         * */
+        conn.setRequestProperty("User-Agent",
+                " Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.120 Safari/537.36");
+
         // Start the query
         conn.connect();
         InputStream stream = conn.getInputStream();
         if (conn.getResponseCode() != 200) {
-            onFailure(DownloadErrorCode.CONNECTION_FAIL);
+            onFailure(new IOException(conn.getResponseMessage() + " " + conn.getResponseCode()));
             return null;
         }
-//		mTotalSize = conn.getContentLength();
+        mTotalSize = conn.getContentLength();
         return stream;
         // END_INCLUDE(get_inputstream)
     }
@@ -97,7 +119,7 @@ public class DownloadTask implements Runnable {
      * @throws IOException
      * @throws UnsupportedEncodingException
      */
-    private void readIt(InputStream is) throws IOException, UnsupportedEncodingException {
+    private void readIt(InputStream is) throws IOException {
         File tempFile = new File(mFile.getAbsolutePath() + ".temp");
 
         if (!tempFile.getParentFile().exists()) {
@@ -118,44 +140,30 @@ public class DownloadTask implements Runnable {
         BufferedOutputStream bos = new BufferedOutputStream(fos, bufferSize);
 
         byte[] buffer = new byte[bufferSize];
-
-        int length = 0;
-
-//		long currSize = 0;
-
+        int length;
+        long currSize = 0;
         try {
             while ((length = is.read(buffer, 0, bufferSize)) != -1) {
-//				long startTime = System.currentTimeMillis();
                 bos.write(buffer, 0, length);
-//				currSize += length;
-//				long endTime = System.currentTimeMillis();
-//				float speed = (float) ((8.0f) / ((float)(endTime - startTime) / 1000f));
-//				double formatedSpeed = ((int) (speed * 10) / 10.0);
-//				onUpdate(mTotalSize, currSize, formatedSpeed);
+                currSize += length;
+                onUpdate(mTotalSize, currSize, (int) (((double) currSize / (double) mTotalSize) * 100));
             }
             tempFile.renameTo(mFile);
-            onComplete();
+            onComplete(mFile);
         } finally {
             IOUtil.close(bos, bis, fos, is);
         }
     }
 
-    @SuppressWarnings("unused")
-    private void onUpdate(long totalSize, long currentSize, double speed) {
+    private void onUpdate(long totalSize, long currentSize, int percent) {
         if (mDownloadListener != null) {
-            mDownloadListener.onUpdate(totalSize, currentSize, speed);
+            mDownloadListener.onUpdate(totalSize, currentSize, percent);
         }
     }
 
-    private void onComplete() {
+    private void onComplete(File file) {
         if (mDownloadListener != null) {
-            mDownloadListener.onComplete();
-        }
-    }
-
-    private void onFailure(DownloadErrorCode errorCode) {
-        if (mDownloadListener != null) {
-            mDownloadListener.onFailure(errorCode);
+            mDownloadListener.onComplete(file);
         }
     }
 
@@ -165,24 +173,19 @@ public class DownloadTask implements Runnable {
         }
     }
 
+    private void onFileExists(File file) {
+        if (mDownloadListener != null) {
+            mDownloadListener.onFileExists(file);
+        }
+    }
+
     public interface DownloadListener {
-        void onUpdate(long totalSize, long currentSize, double speed);
+        void onUpdate(long totalSize, long currentSize, int percent);
 
-        void onComplete();
-
-        void onFailure(DownloadErrorCode errorCode);
+        void onComplete(File file);
 
         void onFailure(Throwable error);
-    }
 
-    public enum DownloadErrorCode {
-        FILE_EXISTS, CONNECTION_FAIL
-    }
-
-    public static File getDownloadFile(String url, String fileName, File fileDir) {
-//        if (url.endsWith("?odconv/pdf")) {
-//            url = url.replace("?odconv/pdf", "");
-//        }
-        return new File(fileDir.getAbsolutePath() + File.separator + fileName + /*url.substring(url.lastIndexOf("."))*/ ".pdf");
+        void onFileExists(File file);
     }
 }

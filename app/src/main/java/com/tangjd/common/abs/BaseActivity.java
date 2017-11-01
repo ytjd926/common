@@ -209,10 +209,14 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public void showTipDialog(String message, boolean cancelable, DialogInterface.OnClickListener onPositiveClick) {
+        showTipDialog(message, cancelable, getString(android.R.string.ok), onPositiveClick);
+    }
+
+    public void showTipDialog(String message, boolean cancelable, String positiveText, DialogInterface.OnClickListener onPositiveClick) {
         try {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage(message);
-            builder.setPositiveButton(android.R.string.ok, onPositiveClick);
+            builder.setPositiveButton(positiveText, onPositiveClick);
             builder.setCancelable(cancelable);
             if (!isFinishing())
                 builder.create().show();
