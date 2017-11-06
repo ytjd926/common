@@ -70,12 +70,6 @@ public class NavigationTabStripHelper {
             }
         });
         tabStrip.setViewPager(viewPager);
-        viewPager.post(new Runnable() {
-            @Override
-            public void run() {
-                ((BaseFragment) ((FragmentPagerAdapter) viewPager.getAdapter()).getItem(0)).getDataIfNeeded();
-            }
-        });
         viewPager.addOnPageChangeListener(
                 new ViewPager.OnPageChangeListener() {
                     @Override
@@ -94,6 +88,12 @@ public class NavigationTabStripHelper {
                     }
                 }
         );
+        viewPager.post(new Runnable() {
+            @Override
+            public void run() {
+                ((BaseFragment) ((FragmentPagerAdapter) viewPager.getAdapter()).getItem(0)).getDataIfNeeded();
+            }
+        });
     }
 
     @Deprecated

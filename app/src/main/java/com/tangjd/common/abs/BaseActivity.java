@@ -4,7 +4,9 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.support.annotation.LayoutRes;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -419,6 +421,13 @@ public class BaseActivity extends AppCompatActivity {
     // ------ Start ------
     public static String EXTRA_COMMON_DATA_BEAN = "extra_data_bean";
     public static int REQUEST_CODE_COMMON = 9999;
+    public Serializable mCommonBean;
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mCommonBean = getIntent().getSerializableExtra(EXTRA_COMMON_DATA_BEAN);
+    }
 
     public void startAct(Class<?> cls) {
         startActivity(new Intent(this, cls));
