@@ -158,11 +158,15 @@ public class CustomWebView extends WebView {
     }
 
     public void showTipDialog(String message) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("提示");
-        builder.setMessage(message);
-        builder.setPositiveButton(android.R.string.ok, null);
-        builder.setCancelable(true);
-        builder.create().show();
+        try {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setTitle("提示");
+            builder.setMessage(message);
+            builder.setPositiveButton(android.R.string.ok, null);
+            builder.setCancelable(true);
+            builder.create().show();
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
