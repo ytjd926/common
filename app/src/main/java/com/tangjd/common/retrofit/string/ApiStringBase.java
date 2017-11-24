@@ -35,7 +35,7 @@ public class ApiStringBase {
             builder.retryOnConnectionFailure(false);
             // Default timeout time
             builder.connectTimeout(10_000, TimeUnit.MILLISECONDS);
-            builder.readTimeout(10_000, TimeUnit.MILLISECONDS);
+            builder.readTimeout(30_000, TimeUnit.MILLISECONDS);
             builder.writeTimeout(10_000, TimeUnit.MILLISECONDS);
             builder.addInterceptor(loggingInterceptor);
             OkHttpClient okHttpClient = builder.build();
