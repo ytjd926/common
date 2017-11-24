@@ -1,4 +1,4 @@
-package com.tangjd.common.retrofit;
+package com.tangjd.common.retrofit.string;
 
 import com.tangjd.common.utils.Log;
 
@@ -6,6 +6,9 @@ import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 
 /**
@@ -44,5 +47,34 @@ public class ApiStringBase {
                     .build();
         }
         return sStringRetrofit;
+    }
+
+    public static void enqueue(Call<String> call, final OnStringRespListener listener) {
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if (listener != null) {
+                    listener.onFinish(true);
+                    try {
+                        listener.onResponse(response.body());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        listener.onError("数据格式出错");
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                if (listener != null) {
+                    listener.onFinish(false);
+                    try {
+                        listener.onError("连接失败\n" + t.getMessage());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
     }
 }

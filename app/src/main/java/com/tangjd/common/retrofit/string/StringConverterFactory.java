@@ -1,4 +1,4 @@
-package com.tangjd.common.retrofit;
+package com.tangjd.common.retrofit.string;
 
 import com.google.gson.Gson;
 

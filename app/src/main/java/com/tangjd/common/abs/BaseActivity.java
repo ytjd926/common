@@ -30,7 +30,23 @@ import java.io.Serializable;
  * Created by tangjd on 2015/12/14.
  */
 public class BaseActivity extends AppCompatActivity {
+    // StartActivity
+    // ------ Start ------
+    public static String EXTRA_COMMON_DATA_BEAN = "extra_data_bean";
+    public static int REQUEST_CODE_COMMON = 9999;
     public View mContentView;
+    public Serializable mCommonBean;
+    // ------ End ------
+    private Toolbar mToolbar;
+    // Toast
+    // ------ Start ------
+    private Toast mToast;
+    // Snackbar
+    // ------ Start ------
+    private Snackbar mSnackbar;
+    // ProgressDialog
+    // ------ Start ------
+    private ProgressDialog mProgressDialog;
 
     @Override
     public void setContentView(@LayoutRes int layoutResID) {
@@ -59,7 +75,6 @@ public class BaseActivity extends AppCompatActivity {
                 break;
         }
     }
-    // ------ End ------
 
     // Toolbar
     // ------ Start ------
@@ -70,8 +85,6 @@ public class BaseActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
-    private Toolbar mToolbar;
 
     public Toolbar getToolbar() {
         if (mToolbar == null) {
@@ -95,6 +108,31 @@ public class BaseActivity extends AppCompatActivity {
             menuItem.setOnMenuItemClickListener(listeners[i]);
         }
     }
+
+    public void enableMenu(Menu menu, int menuIconResId, MenuItem.OnMenuItemClickListener listener) {
+        enableMenu(menu, new int[]{menuIconResId}, new MenuItem.OnMenuItemClickListener[]{listener});
+    }
+
+    public void enableMenu(Menu menu, int[] menuIconResIds, MenuItem.OnMenuItemClickListener[] listeners) {
+        getToolbar();
+        for (int i = 0; i < menuIconResIds.length; i++) {
+            MenuItem menuItem = menu.add("");
+            menuItem.setIcon(menuIconResIds[i]);
+            menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+            menuItem.setOnMenuItemClickListener(listeners[i]);
+        }
+    }
+
+    public void enableMenu(Menu menu, String[] menuTitles, int[] menuIconResIds, MenuItem.OnMenuItemClickListener[] listeners) {
+        getToolbar();
+        for (int i = 0; i < menuIconResIds.length; i++) {
+            MenuItem menuItem = menu.add(menuTitles[i]);
+            menuItem.setIcon(menuIconResIds[i]);
+            menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+            menuItem.setOnMenuItemClickListener(listeners[i]);
+        }
+    }
+    // ------ End ------
 
     public void enableCollapseMenu(Menu menu, String[] menuTitles, MenuItem.OnMenuItemClickListener[] listeners) {
         getToolbar();
@@ -131,11 +169,6 @@ public class BaseActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getToolbar().setNavigationIcon(R.drawable.ic_menu_back);
     }
-    // ------ End ------
-
-    // Toast
-    // ------ Start ------
-    private Toast mToast;
 
     private Toast getToast() {
         if (mToast == null) {
@@ -143,6 +176,8 @@ public class BaseActivity extends AppCompatActivity {
         }
         return mToast;
     }
+
+    // ------ End ------
 
     public void showToast() {
         showToast("加载中...");
@@ -198,8 +233,6 @@ public class BaseActivity extends AppCompatActivity {
         });
     }
 
-    // ------ End ------
-
     // Dialog
     // ------ Start ------
     public void showTipDialog(String message) {
@@ -226,10 +259,12 @@ public class BaseActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+    // ------ End ------
 
     public void showAlertDialog(String message, DialogInterface.OnClickListener onPositiveClick, DialogInterface.OnClickListener onNegativeClick) {
         showAlertDialog(message, getString(android.R.string.ok), true, onPositiveClick, onNegativeClick);
     }
+    // ------ End ------
 
     public void showAlertDialog(String message, boolean cancelable, DialogInterface.OnClickListener onPositiveClick, DialogInterface.OnClickListener onNegativeClick) {
         showAlertDialog(message, getString(android.R.string.ok), cancelable, onPositiveClick, onNegativeClick);
@@ -257,7 +292,6 @@ public class BaseActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-    // ------ End ------
 
     // SingleChoiceDialog
     // ------ Start ------
@@ -272,11 +306,6 @@ public class BaseActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-    // ------ End ------
-
-    // Snackbar
-    // ------ Start ------
-    private Snackbar mSnackbar;
 
     private Snackbar getSnackbar() {
         if (mSnackbar == null) {
@@ -297,6 +326,7 @@ public class BaseActivity extends AppCompatActivity {
             }
         });
     }
+    // ------ End ------
 
     public void showLongSnackbar(final String content) {
         runOnUiThread(new Runnable() {
@@ -349,11 +379,6 @@ public class BaseActivity extends AppCompatActivity {
             }
         });
     }
-    // ------ End ------
-
-    // ProgressDialog
-    // ------ Start ------
-    private ProgressDialog mProgressDialog;
 
     public void showProgressDialog(String title, CharSequence message, boolean cancelable) {
         if (mProgressDialog == null) {
@@ -370,6 +395,7 @@ public class BaseActivity extends AppCompatActivity {
             }
         }
     }
+    // ------ End ------
 
     public void showProgressDialog() {
         showProgressDialog("", "加载中...", true);
@@ -388,13 +414,13 @@ public class BaseActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-    // ------ End ------
 
     // Glide
     // ------ Start ------
     public void loadImage(String url, ImageView imageView) {
         loadImage(url, imageView, R.drawable.ic_default);
     }
+    // ------ End ------
 
     public void loadImage(String url, ImageView imageView, int loadingRes) {
         builderDrawableRequest(url, loadingRes)
@@ -415,13 +441,6 @@ public class BaseActivity extends AppCompatActivity {
                 .fallback(loadingRes)
                 .crossFade();
     }
-    // ------ End ------
-
-    // StartActivity
-    // ------ Start ------
-    public static String EXTRA_COMMON_DATA_BEAN = "extra_data_bean";
-    public static int REQUEST_CODE_COMMON = 9999;
-    public Serializable mCommonBean;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
