@@ -2,8 +2,12 @@ package com.tangjd.common.utils;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Build.VERSION_CODES;
 import android.os.Environment;
+import android.support.v4.content.FileProvider;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -14,6 +18,29 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 public class FileUtil {
+    public static void installApk(Context context, File file) {
+        if (file != null && file.length() > 0 && file.exists() && file.isFile()) {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            Uri data;
+            // 判断版本大于等于7.0
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                // com.tangjd.common.fileprovider是common中的authorities
+                data = FileUtil.getFileProviderUri(context, file);
+                // 给目标应用一个临时授权
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            } else {
+                data = Uri.fromFile(file);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            }
+            intent.setDataAndType(data, "application/vnd.android.package-archive");
+            context.startActivity(intent);
+        }
+    }
+
+    public static Uri getFileProviderUri(Context context, File file) {
+        return FileProvider.getUriForFile(context, "com.tangjd.common.fileprovider", file);
+    }
+
     public static String readFromAssets(Context context, String fileName) {
         String ret = "";
         InputStream inputStream = null;
