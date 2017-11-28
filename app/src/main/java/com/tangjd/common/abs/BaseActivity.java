@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
@@ -15,6 +16,8 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,22 +33,15 @@ import java.io.Serializable;
  * Created by tangjd on 2015/12/14.
  */
 public class BaseActivity extends AppCompatActivity {
-    // StartActivity
-    // ------ Start ------
+
     public static String EXTRA_COMMON_DATA_BEAN = "extra_data_bean";
     public static int REQUEST_CODE_COMMON = 9999;
     public View mContentView;
     public Serializable mCommonBean;
-    // ------ End ------
+
     private Toolbar mToolbar;
-    // Toast
-    // ------ Start ------
     private Toast mToast;
-    // Snackbar
-    // ------ Start ------
     private Snackbar mSnackbar;
-    // ProgressDialog
-    // ------ Start ------
     private ProgressDialog mProgressDialog;
 
     @Override
@@ -59,8 +55,6 @@ public class BaseActivity extends AppCompatActivity {
         super.setContentView(view);
     }
 
-    // Permission
-    // ------ Start ------
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
@@ -76,8 +70,16 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
-    // Toolbar
-    // ------ Start ------
+    public void setStatusBarColor(int color) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
+                    | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(color);
+        }
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
@@ -132,7 +134,6 @@ public class BaseActivity extends AppCompatActivity {
             menuItem.setOnMenuItemClickListener(listeners[i]);
         }
     }
-    // ------ End ------
 
     public void enableCollapseMenu(Menu menu, String[] menuTitles, MenuItem.OnMenuItemClickListener[] listeners) {
         getToolbar();
@@ -170,14 +171,15 @@ public class BaseActivity extends AppCompatActivity {
         getToolbar().setNavigationIcon(R.drawable.ic_menu_back);
     }
 
+    // ------ End ------
+
+
     private Toast getToast() {
         if (mToast == null) {
             mToast = Toast.makeText(this, "", Toast.LENGTH_SHORT);
         }
         return mToast;
     }
-
-    // ------ End ------
 
     public void showToast() {
         showToast("加载中...");
