@@ -2,6 +2,7 @@ package com.tangjd.common.utils;
 
 import android.bluetooth.BluetoothAdapter;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 /**
@@ -10,6 +11,20 @@ import java.lang.reflect.Method;
  */
 
 public class InvokeUtil {
+    public static Object getValueOfField(Object obj, String fieldName) {
+        Class cls = obj.getClass();
+        try {
+            Field field = cls.getDeclaredField(fieldName);
+            field.setAccessible(true);
+            Object valueOfFieldName = field.get(obj);
+            return valueOfFieldName;
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     /**
      * 开启蓝牙可见

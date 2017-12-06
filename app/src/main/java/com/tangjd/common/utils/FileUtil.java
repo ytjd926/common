@@ -18,14 +18,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 public class FileUtil {
-    public static void installApk(Context context, File file) {
+    public static void installApk(Context context, File file, String fileProviderAuthority) {
         if (file != null && file.length() > 0 && file.exists() && file.isFile()) {
             Intent intent = new Intent(Intent.ACTION_VIEW);
             Uri data;
             // 判断版本大于等于7.0
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 // com.tangjd.common.fileprovider是common中的authorities
-                data = FileUtil.getFileProviderUri(context, file);
+                data = FileUtil.getFileProviderUri(context, file, fileProviderAuthority);
                 // 给目标应用一个临时授权
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             } else {
@@ -37,8 +37,9 @@ public class FileUtil {
         }
     }
 
-    public static Uri getFileProviderUri(Context context, File file) {
-        return FileProvider.getUriForFile(context, "com.tangjd.common.fileprovider", file);
+    public static Uri getFileProviderUri(Context context, File file, String fileProviderAuthority) {
+//        return FileProvider.getUriForFile(context, "com.tangjd.common.fileprovider", file);
+        return FileProvider.getUriForFile(context, fileProviderAuthority, file);
     }
 
     public static String readFromAssets(Context context, String fileName) {

@@ -31,6 +31,7 @@ public abstract class BaseFragment extends Fragment {
                 parent.removeView(mLayoutView);
             }
         }
+        getDataIfNeeded();
         return mLayoutView;
     }
 

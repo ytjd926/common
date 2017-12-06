@@ -20,7 +20,6 @@
             android:theme="@style/Theme.AppCompat.Light.Dialog"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
 
-
         <!--<provider-->
             <!--android:name="android.support.v4.content.FileProvider"-->
             <!--android:authorities="com.tangjd.common.fileprovider"-->
