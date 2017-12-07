@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -53,6 +54,12 @@ public class BaseActivity extends AppCompatActivity {
     public void setContentView(View view) {
         mContentView = view;
         super.setContentView(view);
+    }
+
+    @Override
+    public void setContentView(View view, ViewGroup.LayoutParams params) {
+        mContentView = view;
+        super.setContentView(view, params);
     }
 
     @Override
@@ -401,6 +408,10 @@ public class BaseActivity extends AppCompatActivity {
 
     public void showProgressDialog() {
         showProgressDialog("", "加载中...", true);
+    }
+
+    public void showProgressDialog(boolean cancelable) {
+        showProgressDialog("", "加载中...", cancelable);
     }
 
     public void showProgressDialog(CharSequence message) {
