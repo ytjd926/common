@@ -3,8 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/toolbar"
     android:layout_width="match_parent"
-    android:layout_height="?attr/actionBarSize"
+    android:layout_height="50dp"
     android:background="@color/toolbar_bg_color"
+    android:minHeight="50dp"
     app:theme="@style/ToolbarTheme">
 
     <TextView
