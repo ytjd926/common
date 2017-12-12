@@ -160,7 +160,7 @@ public class BleScanHelper extends BaseActivity {
             };
 
     public void parse(final BluetoothDevice device, final int rssi, final byte[] scanRecord) {
-        Log.e("TTT", "----------Rssi:" + rssi + "      " + device.getAddress() + "      " + device.getName());
+        // Log.e("TTT", "----------Rssi:" + rssi + "      " + device.getAddress() + "      " + device.getName());
         BtBean bean = new BtBean();
         bean.mDeviceName = device.getName();
         bean.mMajor = (scanRecord[25] << 8 & 65280) + (scanRecord[26] & 255);

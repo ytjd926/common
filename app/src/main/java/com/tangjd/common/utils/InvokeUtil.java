@@ -12,8 +12,8 @@ import java.lang.reflect.Method;
 
 public class InvokeUtil {
     public static Object getValueOfField(Object obj, String fieldName) {
-        Class cls = obj.getClass();
         try {
+            Class cls = Class.forName(obj.getClass().getName());
             Field field = cls.getDeclaredField(fieldName);
             field.setAccessible(true);
             Object valueOfFieldName = field.get(obj);
@@ -22,8 +22,25 @@ public class InvokeUtil {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
             e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
         }
         return null;
+    }
+
+    public static void setValueOfField(Object obj, String fieldName, Object value) {
+        try {
+            Class cls = Class.forName(obj.getClass().getName());
+            Field field = cls.getDeclaredField(fieldName);
+            field.setAccessible(true);
+            field.set(obj, value);
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

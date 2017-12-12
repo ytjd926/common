@@ -39,7 +39,7 @@ public class BaseActivity extends AppCompatActivity {
     private Toolbar mToolbar;
     private Toast mToast;
     private Snackbar mSnackbar;
-    private ProgressDialog mProgressDialog;
+    public ProgressDialog mProgressDialog;
 
     @Override
     public void setContentView(@LayoutRes int layoutResID) {
