@@ -10,6 +10,8 @@ import com.gigamole.navigationtabstrip.NavigationTabStrip;
 import com.tangjd.common.abs.BaseActivity;
 import com.tangjd.common.abs.BaseFragment;
 
+import java.util.List;
+
 /**
  * Author: tangjd
  * Date: 2017/8/3
@@ -49,7 +51,7 @@ public class NavigationTabStripHelper {
 //            }
 //        });
 
-    public static void set(final BaseActivity context, NavigationTabStrip tabStrip, final ViewPager viewPager, String[] titles, final String[] baseFragmentNameArr, final Bundle bundle) {
+    public static void set(final BaseActivity context, NavigationTabStrip tabStrip, final ViewPager viewPager, String[] titles, final String[] baseFragmentNameArr, final List<Bundle> bundles) {
         tabStrip.setTitles(titles);
         viewPager.setAdapter(new FragmentPagerAdapter(context.getSupportFragmentManager()) {
             private SparseArray<Fragment> mFragments = new SparseArray<>();
@@ -58,7 +60,7 @@ public class NavigationTabStripHelper {
             public Fragment getItem(int position) {
                 Fragment fragment = mFragments.get(position);
                 if (fragment == null) {
-                    fragment = Fragment.instantiate(context, baseFragmentNameArr[position], bundle);
+                    fragment = Fragment.instantiate(context, baseFragmentNameArr[position], bundles == null ? null : bundles.get(position));
                     mFragments.put(position, fragment);
                 }
                 return fragment;
@@ -97,7 +99,7 @@ public class NavigationTabStripHelper {
     }
 
     @Deprecated
-    public static void set(final BaseActivity context, NavigationTabStrip tabStrip, final ViewPager viewPager, final String[] baseFragmentNameArr, final Bundle bundle) {
+    public static void set(final BaseActivity context, NavigationTabStrip tabStrip, final ViewPager viewPager, final String[] baseFragmentNameArr, final List<Bundle> bundles) {
         viewPager.setAdapter(new FragmentPagerAdapter(context.getSupportFragmentManager()) {
             private SparseArray<Fragment> mFragments = new SparseArray<>();
 
@@ -105,7 +107,7 @@ public class NavigationTabStripHelper {
             public Fragment getItem(int position) {
                 Fragment fragment = mFragments.get(position);
                 if (fragment == null) {
-                    fragment = Fragment.instantiate(context, baseFragmentNameArr[position], bundle);
+                    fragment = Fragment.instantiate(context, baseFragmentNameArr[position], bundles == null ? null : bundles.get(position));
                     mFragments.put(position, fragment);
                 }
                 return fragment;
