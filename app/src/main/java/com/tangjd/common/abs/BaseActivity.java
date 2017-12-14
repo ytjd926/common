@@ -19,9 +19,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.tangjd.common.R;
 
 import java.io.Serializable;
@@ -426,50 +430,60 @@ public class BaseActivity extends AppCompatActivity {
 
     // Glide
     // ------ Start ------
-//    public void loadImage(String url, ImageView imageView) {
-//        loadImage(url, imageView, R.drawable.ic_default);
-//    }
-//
-//    public void loadImage(String url, ImageView imageView, int loadingRes) {
-//        builderDrawableRequest(url, loadingRes)
-//                .into(imageView);
-//    }
-//
-//    public DrawableRequestBuilder builderDrawableRequest(String url) {
-//        return builderDrawableRequest(url, R.drawable.ic_default);
-//    }
-//
-//    public DrawableRequestBuilder builderDrawableRequest(String url, int loadingRes) {
-//        return Glide.with(this)
-//                .load(url)
-//                .diskCacheStrategy(DiskCacheStrategy.ALL)
-//                .centerCrop()
-//                .placeholder(loadingRes)
-//                .error(loadingRes)
-//                .fallback(loadingRes)
-//                .crossFade();
-//    }
-//
-//    public void loadRoundedImage(File file, final ImageView imageView) {
-//        Glide.with(this)
-//                .load(file)
-////                .asBitmap()
-//                .diskCacheStrategy(DiskCacheStrategy.ALL)
-//                .fitCenter()
-//                .placeholder(R.drawable.ic_default)
-//                .error(R.drawable.ic_default)
-//                .fallback(R.drawable.ic_default)
-////                .into(new BitmapImageViewTarget(imageView) {
-////                    @Override
-////                    protected void setResource(Bitmap resource) {
-////                        RoundedBitmapDrawable circularBitmapDrawable =
-////                                RoundedBitmapDrawableFactory.create(getResources(), resource);
-////                        circularBitmapDrawable.setCircular(true);
-////                        imageView.setImageDrawable(circularBitmapDrawable);
-////                    }
-////                });
-//        .into(imageView);
-//    }
+    public RequestOptions getDefaultRequestOption(RequestOptions requestOptions, int loadingRes) {
+        return RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL)
+                .placeholder(loadingRes)
+                .error(loadingRes)
+                .fallback(loadingRes);
+    }
+
+    public void loadImageCenterCrop(String url, ImageView imageView) {
+        loadImageCenterCrop(url, imageView, R.drawable.ic_default);
+    }
+
+    public void loadImageCenterCrop(String url, ImageView imageView, int loadingRes) {
+        Glide.with(this)
+                .load(url)
+                .apply(
+                        getDefaultRequestOption(RequestOptions.centerCropTransform(), loadingRes)
+                ).into(imageView);
+    }
+
+    public void loadImageFitCenter(String url, ImageView imageView) {
+        loadImageFitCenter(url, imageView, R.drawable.ic_default);
+    }
+
+    public void loadImageFitCenter(String url, ImageView imageView, int loadingRes) {
+        Glide.with(this)
+                .load(url)
+                .apply(
+                        getDefaultRequestOption(RequestOptions.fitCenterTransform(), loadingRes)
+                ).into(imageView);
+    }
+
+    public void loadImageCenterInside(String url, ImageView imageView) {
+        loadImageCenterInside(url, imageView, R.drawable.ic_default);
+    }
+
+    public void loadImageCenterInside(String url, ImageView imageView, int loadingRes) {
+        Glide.with(this)
+                .load(url)
+                .apply(
+                        getDefaultRequestOption(RequestOptions.centerInsideTransform(), loadingRes)
+                ).into(imageView);
+    }
+
+    public void loadImageRound(String url, ImageView imageView) {
+        loadImageRound(url, imageView, R.drawable.ic_default);
+    }
+
+    public void loadImageRound(String url, ImageView imageView, int loadingRes) {
+        Glide.with(this)
+                .load(url)
+                .apply(
+                        getDefaultRequestOption(RequestOptions.circleCropTransform(), loadingRes)
+                ).into(imageView);
+    }
     // ------ End ------
 
     @Override

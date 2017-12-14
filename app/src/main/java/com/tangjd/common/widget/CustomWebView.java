@@ -18,6 +18,19 @@ import android.webkit.WebViewClient;
  * Created by tangjd on 2016/8/23.
  */
 public class CustomWebView extends WebView {
+    public CustomWebView(Context context) {
+        this(context, null);
+    }
+
+    public CustomWebView(Context context, AttributeSet attrs) {
+        this(context, attrs, 0);
+    }
+
+    public CustomWebView(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        init();
+    }
+
     public interface OnLoadStateChangeListener {
         void onPageStarted(WebView view, String url, Bitmap favicon);
 
@@ -32,19 +45,6 @@ public class CustomWebView extends WebView {
 
     public void setOnLoadStateChangeListener(OnLoadStateChangeListener listener) {
         mListener = listener;
-    }
-
-    public CustomWebView(Context context) {
-        this(context, null);
-    }
-
-    public CustomWebView(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
-    }
-
-    public CustomWebView(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        init();
     }
 
     private void init() {
@@ -165,7 +165,7 @@ public class CustomWebView extends WebView {
             builder.setPositiveButton(android.R.string.ok, null);
             builder.setCancelable(true);
             builder.create().show();
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
