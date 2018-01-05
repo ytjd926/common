@@ -60,18 +60,17 @@ public class DisplayUtils {
         Class<?> statusBarClass = null;
         Object statusBarObj = null;
         java.lang.reflect.Field statusBarField = null;
-        int id = 0;
-        int statusBarHeight = 0;
+        int statusBarHeight = 48;
         try {
             statusBarClass = Class.forName("com.android.internal.R$dimen");
             statusBarObj = statusBarClass.newInstance();
-            statusBarField = statusBarClass.getField("status_bar_height");
-            id = Integer.parseInt(statusBarField.get(statusBarObj).toString());
-            statusBarHeight = context.getResources().getDimensionPixelSize(id);
-            return statusBarHeight;
+            // statusBarField = statusBarClass.getField("status_bar_height");
+            statusBarField = statusBarClass.getField("system_bar_height");
+            int id = Integer.parseInt(statusBarField.get(statusBarObj).toString());
+            // statusBarHeight = context.getResources().getDimensionPixelSize(id);
+            statusBarHeight = context.getResources().getDimensionPixelOffset(id);
         } catch (Exception e) {
             e.printStackTrace();
-            statusBarHeight = 0;
         }
         return statusBarHeight;
     }
