@@ -64,11 +64,9 @@ public class DisplayUtils {
         try {
             statusBarClass = Class.forName("com.android.internal.R$dimen");
             statusBarObj = statusBarClass.newInstance();
-            // statusBarField = statusBarClass.getField("status_bar_height");
-            statusBarField = statusBarClass.getField("system_bar_height");
+            statusBarField = statusBarClass.getField("status_bar_height");
             int id = Integer.parseInt(statusBarField.get(statusBarObj).toString());
-            // statusBarHeight = context.getResources().getDimensionPixelSize(id);
-            statusBarHeight = context.getResources().getDimensionPixelOffset(id);
+            statusBarHeight = context.getResources().getDimensionPixelSize(id);
         } catch (Exception e) {
             e.printStackTrace();
         }
