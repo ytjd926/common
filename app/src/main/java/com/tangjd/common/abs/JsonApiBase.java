@@ -20,7 +20,7 @@ import java.util.Map;
  * Created by tangjd on 2016/8/8.
  */
 public class JsonApiBase {
-    public static final String TAG = "Api";
+    public static final String TAG = "ApiTT";
 
     public static Request doGetRequest(String url, OnJsonResponseListener listener) {
         return doGetRequest(url, null, null, listener);
