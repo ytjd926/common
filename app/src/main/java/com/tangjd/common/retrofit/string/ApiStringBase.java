@@ -16,7 +16,7 @@ import retrofit2.Retrofit;
  */
 
 public class ApiStringBase {
-    public static final String TAG = "Api";
+    public static final String TAG = "ApiTT";
 
     public static Retrofit getStringRetrofit(String domainName) {
         //日志显示级别

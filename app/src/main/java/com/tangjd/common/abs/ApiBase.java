@@ -18,7 +18,7 @@ import java.util.Map;
  * Created by tangjd on 2016/8/8.
  */
 public class ApiBase {
-    public static final String TAG = "Api";
+    public static final String TAG = "ApiTT";
 
     public static Request doGetRequest(String url, OnResponseListener listener) {
         return doRequest(Request.Method.GET, url, null, listener);

@@ -430,7 +430,7 @@ public class BaseActivity extends AppCompatActivity {
 
     // Glide
     // ------ Start ------
-    public RequestOptions getDefaultRequestOption(RequestOptions requestOptions, int loadingRes) {
+    public RequestOptions getDefaultRequestOption(int loadingRes) {
         return RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL)
                 .placeholder(loadingRes)
                 .error(loadingRes)
@@ -445,7 +445,7 @@ public class BaseActivity extends AppCompatActivity {
         Glide.with(this)
                 .load(url)
                 .apply(
-                        getDefaultRequestOption(RequestOptions.centerCropTransform(), loadingRes)
+                        getDefaultRequestOption(loadingRes).centerCropTransform()
                 ).into(imageView);
     }
 
@@ -457,7 +457,7 @@ public class BaseActivity extends AppCompatActivity {
         Glide.with(this)
                 .load(url)
                 .apply(
-                        getDefaultRequestOption(RequestOptions.fitCenterTransform(), loadingRes)
+                        getDefaultRequestOption(loadingRes).fitCenterTransform()
                 ).into(imageView);
     }
 
@@ -469,7 +469,7 @@ public class BaseActivity extends AppCompatActivity {
         Glide.with(this)
                 .load(url)
                 .apply(
-                        getDefaultRequestOption(RequestOptions.centerInsideTransform(), loadingRes)
+                        getDefaultRequestOption(loadingRes).centerInsideTransform()
                 ).into(imageView);
     }
 
@@ -481,7 +481,7 @@ public class BaseActivity extends AppCompatActivity {
         Glide.with(this)
                 .load(url)
                 .apply(
-                        getDefaultRequestOption(RequestOptions.circleCropTransform(), loadingRes)
+                        getDefaultRequestOption(loadingRes).circleCropTransform()
                 ).into(imageView);
     }
     // ------ End ------
