@@ -511,5 +511,11 @@ public class BaseActivity extends AppCompatActivity {
         intent.putExtra(EXTRA_COMMON_DATA_BEAN, bean);
         startActivityForResult(intent, REQUEST_CODE_COMMON);
     }
+
+    public void setResult(int resultCode, Serializable bean) {
+        Intent intent = new Intent();
+        intent.putExtra(EXTRA_COMMON_DATA_BEAN, bean);
+        super.setResult(resultCode, intent);
+    }
     // ------ End ------
 }
