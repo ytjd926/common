@@ -104,7 +104,7 @@ public class JsonApiBase {
     }
 
     public interface OnJsonResponseListener {
-        void onResponse(JSONObject response);
+        void onResponse(JSONObject data);
 
         void onError(String error);
 

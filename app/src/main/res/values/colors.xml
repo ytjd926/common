@@ -22,7 +22,7 @@
     <color name="toolbar_bg_color">#5DD7DF</color>
     <color name="toolbar_title_color">#FFFFFF</color>
 
-    <color name="app_bg_light">#FAFAFA</color>
+    <color name="app_bg_light">#F5F5F5</color>
     <color name="app_bg">#EAEBEC</color>
 
     <color name="transparent_half_2">#20000000</color>
