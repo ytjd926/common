@@ -502,11 +502,23 @@ public class BaseActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void startAct(Class<?> cls, Serializable... bean) {
+        Intent intent = new Intent(this, cls);
+        intent.putExtra(EXTRA_COMMON_DATA_BEAN, bean);
+        startActivity(intent);
+    }
+
     public void startActForResult(Class<?> cls) {
         startActivityForResult(new Intent(this, cls), REQUEST_CODE_COMMON);
     }
 
     public void startActForResult(Class<?> cls, Serializable bean) {
+        Intent intent = new Intent(this, cls);
+        intent.putExtra(EXTRA_COMMON_DATA_BEAN, bean);
+        startActivityForResult(intent, REQUEST_CODE_COMMON);
+    }
+
+    public void startActForResult(Class<?> cls, Serializable... bean) {
         Intent intent = new Intent(this, cls);
         intent.putExtra(EXTRA_COMMON_DATA_BEAN, bean);
         startActivityForResult(intent, REQUEST_CODE_COMMON);
