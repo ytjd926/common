@@ -41,12 +41,22 @@ public class SFBaseActivity extends BaseActivity implements SlidingPaneLayout.Pa
         activity.startAct(cls, bean);
     }
 
+    public static void startActSF(BaseActivity activity, Class<?> cls, Serializable... bean) {
+        sDecorView = activity.getWindow().getDecorView();
+        activity.startAct(cls, bean);
+    }
+
     public static void startActSFForResult(BaseActivity activity, Class<?> cls) {
         sDecorView = activity.getWindow().getDecorView();
         activity.startActForResult(cls);
     }
 
     public static void startActSFForResult(BaseActivity activity, Class<?> cls, Serializable bean) {
+        sDecorView = activity.getWindow().getDecorView();
+        activity.startActForResult(cls, bean);
+    }
+
+    public static void startActSFForResult(BaseActivity activity, Class<?> cls, Serializable... bean) {
         sDecorView = activity.getWindow().getDecorView();
         activity.startActForResult(cls, bean);
     }
