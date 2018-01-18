@@ -131,7 +131,7 @@ public class SFBaseActivity extends BaseActivity implements SlidingPaneLayout.Pa
 
     @Override
     public void setContentView(View v, ViewGroup.LayoutParams params) {
-        if (mInitSuccess) {
+        if (mInitSuccess && mEnableSlide) {
             super.setContentView(mSlidingPaneLayout, params);
             mContentView.removeAllViews();
             mContentView.addView(v, params);
@@ -160,5 +160,11 @@ public class SFBaseActivity extends BaseActivity implements SlidingPaneLayout.Pa
             mPreDecorView.setTranslationX(slideOffset * (float) DEFAULT_TRANSLATION_X - (float) DEFAULT_TRANSLATION_X);
         }
         mShadowView.setAlpha(1 - slideOffset);
+    }
+
+    private boolean mEnableSlide = true;
+
+    public void disableSlide() {
+        mEnableSlide = false;
     }
 }
