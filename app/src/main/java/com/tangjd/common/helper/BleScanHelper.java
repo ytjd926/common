@@ -16,8 +16,8 @@
 
 package com.tangjd.common.helper;
 
+import android.Manifest;
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
@@ -26,29 +26,52 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.util.Log;
+import android.text.TextUtils;
+import android.widget.Toast;
 
 import com.tangjd.common.abs.BaseActivity;
-import com.tangjd.common.abs.PermissionManager;
 
 /**
  * Activity for scanning and displaying available Bluetooth LE devices.
  */
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
-public class BleScanHelper extends BaseActivity {
+public abstract class BleScanHelper extends BaseActivity {
     private BluetoothAdapter mBluetoothAdapter;
     private boolean mScanning;
-    private Handler mHandler;
 
     private static final int REQUEST_ENABLE_BT = 1;
-    // Stops scanning after 10 seconds.
-    private static final long SCAN_PERIOD = 10000;
+//    // Stops scanning after 10 seconds.
+//    private static final long SCAN_PERIOD = 10000;
+
+    private ConnectState mState = ConnectState.STATE_NONE;
+
+    public enum ConnectState {
+        STATE_NONE("无连接"), // we're doing nothing
+        STATE_LISTEN("监听中"), // now listening for incoming connections
+        STATE_CONNECTING("连接中"), // now initiating an outgoing connection
+        STATE_CONNECTED("已连接"), // now connected to a remote device
+        STATE_DISCONNECTED("已断开"),
+        STATE_CONNECTION_FAILED("连接失败"); // now connected to a remote device
+        public String mDesc;
+
+        ConnectState(String desc) {
+            mDesc = desc;
+        }
+    }
+
+    public void setState(ConnectState state) {
+        mState = state;
+        if (state == ConnectState.STATE_NONE || state == ConnectState.STATE_LISTEN
+                || state == ConnectState.STATE_CONNECTION_FAILED || state == ConnectState.STATE_DISCONNECTED) {
+            scanLeDevice(true);
+        } else if (state == ConnectState.STATE_CONNECTING || state == ConnectState.STATE_CONNECTED) {
+            scanLeDevice(false);
+        }
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mHandler = new Handler();
 
         // Use this check to determine whether BLE is supported on the device.  Then you can
         // selectively disable BLE-related features.
@@ -59,8 +82,11 @@ public class BleScanHelper extends BaseActivity {
 
         // Initializes a Bluetooth adapter.  For API level 18 and above, get a reference to
         // BluetoothAdapter through BluetoothManager.
-        final BluetoothManager bluetoothManager =
-                (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
+        final BluetoothManager bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
+        if (bluetoothManager == null) {
+            showTipDialog("此设备不支持蓝牙", false, null);
+            return;
+        }
         mBluetoothAdapter = bluetoothManager.getAdapter();
 
         // Checks if Bluetooth is supported on the device.
@@ -68,10 +94,31 @@ public class BleScanHelper extends BaseActivity {
             showTipDialog("此设备不支持蓝牙", false, null);
             return;
         }
-        PermissionManager.mayRequestAccessFineLocation(this);
+        mFilterDeviceNameContains = getFilterDeviceName();
+        mayRequestPermission(new String[]{
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.BLUETOOTH,
+                Manifest.permission.BLUETOOTH_ADMIN
+        }, new PermissionRequestCallback() {
+            @Override
+            public void onSuccess() {
+                if (mBluetoothAdapter.enable()) {
+                    scanLeDevice(true);
+                } else {
+                    Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                    startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+                }
+            }
+        });
     }
 
-//    @Override
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        scanLeDevice(false);
+    }
+
+    //    @Override
 //    public boolean onOptionsItemSelected(MenuItem item) {
 //        switch (item.getItemId()) {
 //            case R.id.menu_scan:
@@ -86,37 +133,15 @@ public class BleScanHelper extends BaseActivity {
 //    }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        if (mBluetoothAdapter != null) {
-            // Ensures Bluetooth is enabled on the device.  If Bluetooth is not currently enabled,
-            // fire an intent to display a dialog asking the user to grant permission to enable it.
-            if (!mBluetoothAdapter.isEnabled()) {
-                if (!mBluetoothAdapter.isEnabled()) {
-                    Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                    startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-                }
-            }
-
-            // Initializes list view adapter.
-            scanLeDevice(true);
-        }
-    }
-
-    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // User chose not to enable Bluetooth.
-        if (requestCode == REQUEST_ENABLE_BT && resultCode == Activity.RESULT_CANCELED) {
-            finish();
-            return;
-        }
         super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        scanLeDevice(false);
+        if (requestCode == REQUEST_ENABLE_BT) {
+            if (resultCode == RESULT_CANCELED) {
+                Toast.makeText(this, "蓝牙不可用", Toast.LENGTH_SHORT).show();
+            } else if (resultCode == RESULT_OK) {
+                scanLeDevice(true);
+            }
+        }
     }
 
 //    @Override
@@ -133,7 +158,13 @@ public class BleScanHelper extends BaseActivity {
 //        startActivity(intent);
 //    }
 
-    private void scanLeDevice(final boolean enable) {
+    public void scanLeDevice(final boolean enable) {
+        if (mScanning && enable) {
+            return;
+        }
+        if (!mScanning && !enable) {
+            return;
+        }
         if (enable) {
             mScanning = true;
             mBluetoothAdapter.startLeScan(mLeScanCallback);
@@ -147,41 +178,31 @@ public class BleScanHelper extends BaseActivity {
     // Device scan callback.
     private BluetoothAdapter.LeScanCallback mLeScanCallback =
             new BluetoothAdapter.LeScanCallback() {
-
                 @Override
                 public void onLeScan(final BluetoothDevice device, final int rssi, final byte[] scanRecord) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            // mLeDeviceListAdapter.addDevice(device, rssi, scanRecord);
-                            parse(device, rssi, scanRecord);
-                        }
-                    });
+                    if (TextUtils.isEmpty(mFilterDeviceNameContains) ||
+                            (!TextUtils.isEmpty(device.getName()) && device.getName().toLowerCase().contains(mFilterDeviceNameContains.toLowerCase()))) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                // mLeDeviceListAdapter.addDevice(device, rssi, scanRecord);
+                                parse(device, rssi, scanRecord);
+                            }
+                        });
+                    }
                 }
             };
 
     public void parse(final BluetoothDevice device, final int rssi, final byte[] scanRecord) {
         // Log.e("TTT", "----------Rssi:" + rssi + "      " + device.getAddress() + "      " + device.getName());
-        BtBean bean = new BtBean();
-        bean.mDeviceName = device.getName();
-        bean.mMajor = (scanRecord[25] << 8 & 65280) + (scanRecord[26] & 255);
-        bean.mMinor = (scanRecord[27] << 8 & 65280) + (scanRecord[28] & 255);
-        bean.mMac = device.getAddress();
-        bean.mRssi = rssi;
-        bean.mScanRecord = scanRecord;
-        processLogin(bean);
+        processLogin(device, rssi, scanRecord,
+                (scanRecord[25] << 8 & 65280) + (scanRecord[26] & 255),
+                (scanRecord[27] << 8 & 65280) + (scanRecord[28] & 255));
     }
 
-    public void processLogin(BtBean bean) {
+    public String mFilterDeviceNameContains;
 
-    }
+    public abstract String getFilterDeviceName();
 
-    public class BtBean {
-        public String mDeviceName;
-        public int mMajor;
-        public int mMinor;
-        public String mMac;
-        public int mRssi;
-        public byte[] mScanRecord;
-    }
+    public abstract void processLogin(BluetoothDevice device, int rssi, byte[] scanRecord, int major, int minor);
 }

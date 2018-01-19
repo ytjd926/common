@@ -5,6 +5,7 @@ import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.os.Build;
 
+import com.tangjd.common.abs.BaseActivity;
 import com.tangjd.common.utils.ByteUtil;
 import com.tangjd.common.utils.Log;
 
@@ -12,7 +13,7 @@ import com.tangjd.common.utils.Log;
  * Created by tangjd on 2017/2/15.
  */
 
-public abstract class NfcSignInHelper extends BleSignInHelper {
+public abstract class NfcSignInHelper extends BaseActivity {
 
     public boolean mSignIning = false;
     // Recommend NfcAdapter flags for reading from other Android devices. Indicates that this

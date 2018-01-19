@@ -3,10 +3,10 @@ package com.tangjd.common.abs;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
@@ -27,6 +27,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.tangjd.common.R;
+import com.werb.permissionschecker.PermissionChecker;
 
 import java.io.Serializable;
 
@@ -34,49 +35,8 @@ import java.io.Serializable;
  * Created by tangjd on 2015/12/14.
  */
 public class BaseActivity extends AppCompatActivity {
-
-    public static String EXTRA_COMMON_DATA_BEAN = "extra_data_bean";
-    public static int REQUEST_CODE_COMMON = 9999;
-    public View mContentView;
-    public Serializable mCommonBean;
-
-    private Toolbar mToolbar;
-    private Toast mToast;
-    private Snackbar mSnackbar;
-    public ProgressDialog mProgressDialog;
-
-    @Override
-    public void setContentView(@LayoutRes int layoutResID) {
-        setContentView(LayoutInflater.from(this).inflate(layoutResID, null, false));
-    }
-
-    @Override
-    public void setContentView(View view) {
-        mContentView = view;
-        super.setContentView(view);
-    }
-
-    @Override
-    public void setContentView(View view, ViewGroup.LayoutParams params) {
-        mContentView = view;
-        super.setContentView(view, params);
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        switch (requestCode) {
-            case PermissionManager.REQUEST_READ_EXTERNAL_STORAGE:
-            case PermissionManager.REQUEST_ACCESS_FINE_LOCATION:
-            default:
-                if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    showTipDialog("获取权限成功!");
-                } else {
-                    showTipDialog("获取权限已被阻止，请在应用权限设置中开启!");
-                }
-                break;
-        }
-    }
-
+    // StatusBar
+    // ------ Start ------
     public void setStatusBarColor(int color) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
@@ -86,6 +46,11 @@ public class BaseActivity extends AppCompatActivity {
             window.setStatusBarColor(color);
         }
     }
+    // ------ End ------
+
+    // Toolbar
+    // ------ Start ------
+    private Toolbar mToolbar;
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -177,9 +142,11 @@ public class BaseActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getToolbar().setNavigationIcon(R.drawable.ic_menu_back);
     }
-
     // ------ End ------
 
+    // Toast
+    // ------ Start ------
+    private Toast mToast;
 
     private Toast getToast() {
         if (mToast == null) {
@@ -241,8 +208,9 @@ public class BaseActivity extends AppCompatActivity {
             }
         });
     }
+    // ------ End ------
 
-    // Dialog
+    // TipDialog
     // ------ Start ------
     public void showTipDialog(String message) {
         showTipDialog(message, true, null);
@@ -270,10 +238,11 @@ public class BaseActivity extends AppCompatActivity {
     }
     // ------ End ------
 
+    // AlertDialog
+    // ------ Start ------
     public void showAlertDialog(String message, DialogInterface.OnClickListener onPositiveClick, DialogInterface.OnClickListener onNegativeClick) {
         showAlertDialog(message, getString(android.R.string.ok), true, onPositiveClick, onNegativeClick);
     }
-    // ------ End ------
 
     public void showAlertDialog(String message, boolean cancelable, DialogInterface.OnClickListener onPositiveClick, DialogInterface.OnClickListener onNegativeClick) {
         showAlertDialog(message, getString(android.R.string.ok), cancelable, onPositiveClick, onNegativeClick);
@@ -301,6 +270,7 @@ public class BaseActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+    // ------ End ------
 
     // SingleChoiceDialog
     // ------ Start ------
@@ -314,6 +284,29 @@ public class BaseActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    // ------ End ------
+
+    // Snackbar
+    // ------ Start ------
+    private Snackbar mSnackbar;
+    public View mContentView;
+
+    @Override
+    public void setContentView(@LayoutRes int layoutResID) {
+        setContentView(LayoutInflater.from(this).inflate(layoutResID, null, false));
+    }
+
+    @Override
+    public void setContentView(View view) {
+        mContentView = view;
+        super.setContentView(view);
+    }
+
+    @Override
+    public void setContentView(View view, ViewGroup.LayoutParams params) {
+        mContentView = view;
+        super.setContentView(view, params);
     }
 
     private Snackbar getSnackbar() {
@@ -335,7 +328,6 @@ public class BaseActivity extends AppCompatActivity {
             }
         });
     }
-    // ------ End ------
 
     public void showLongSnackbar(final String content) {
         runOnUiThread(new Runnable() {
@@ -350,7 +342,7 @@ public class BaseActivity extends AppCompatActivity {
         });
     }
 
-    public void showActionLongSnackbar(final String content, final String actionText, final View.OnClickListener listener) {
+    public void showLongSnackbarWithAction(final String content, final String actionText, final View.OnClickListener listener) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -364,7 +356,7 @@ public class BaseActivity extends AppCompatActivity {
         });
     }
 
-    public void showActionIndefiniteSnackbar(final String content, final String actionText, final View.OnClickListener listener) {
+    public void showSnackbarWithActionIndefinite(final String content, final String actionText, final View.OnClickListener listener) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -388,6 +380,11 @@ public class BaseActivity extends AppCompatActivity {
             }
         });
     }
+    // ------ End ------
+
+    // ProgressDialog
+    // ------ Start ------
+    public ProgressDialog mProgressDialog;
 
     public void showProgressDialog(String title, CharSequence message, boolean cancelable) {
         if (mProgressDialog == null) {
@@ -404,7 +401,6 @@ public class BaseActivity extends AppCompatActivity {
             }
         }
     }
-    // ------ End ------
 
     public void showProgressDialog() {
         showProgressDialog("", "加载中...", true);
@@ -427,6 +423,7 @@ public class BaseActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+    // ------ End ------
 
     // Glide
     // ------ Start ------
@@ -486,6 +483,12 @@ public class BaseActivity extends AppCompatActivity {
     }
     // ------ End ------
 
+    // startActivity & Intent
+    // ------ Start ------
+    public static String EXTRA_COMMON_DATA_BEAN = "extra_data_bean";
+    public static int REQUEST_CODE_COMMON = 9999;
+    public Serializable mCommonBean;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -528,6 +531,43 @@ public class BaseActivity extends AppCompatActivity {
         Intent intent = new Intent();
         intent.putExtra(EXTRA_COMMON_DATA_BEAN, bean);
         super.setResult(resultCode, intent);
+    }
+    // ------ End ------
+
+    // Permission
+    // ------ Start ------
+    PermissionChecker mPermissionChecker;
+    PermissionRequestCallback mPermissionCallback;
+
+    public void mayRequestPermission(String[] permissionArr, PermissionRequestCallback callback) {
+        if (mPermissionChecker == null) {
+            mPermissionChecker = new PermissionChecker(this);
+        }
+        mPermissionCallback = callback;
+        if (mPermissionChecker.isLackPermissions(permissionArr)) {
+            mPermissionChecker.requestPermissions();
+        } else {
+            callback.onSuccess();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case PermissionChecker.PERMISSION_REQUEST_CODE:
+                if (mPermissionChecker.hasAllPermissionsGranted(grantResults)) {
+                    // 执行你的相关操作
+                    mPermissionCallback.onSuccess();
+                } else {
+                    // 权限拒绝后的提示
+                    mPermissionChecker.showDialog();
+                }
+                break;
+        }
+    }
+
+    public interface PermissionRequestCallback {
+        void onSuccess();
     }
     // ------ End ------
 }
