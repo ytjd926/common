@@ -434,49 +434,49 @@ public class BaseActivity extends AppCompatActivity {
                 .fallback(loadingRes);
     }
 
-    public void loadImageCenterCrop(String url, ImageView imageView) {
-        loadImageCenterCrop(url, imageView, R.drawable.ic_default);
+    public void loadImageCenterCrop(Object urlOrFileOrPath, ImageView imageView) {
+        loadImageCenterCrop(urlOrFileOrPath, imageView, R.drawable.ic_default);
     }
 
-    public void loadImageCenterCrop(String url, ImageView imageView, int loadingRes) {
+    public void loadImageCenterCrop(Object urlOrFileOrPath, ImageView imageView, int loadingRes) {
         Glide.with(this)
-                .load(url)
+                .load(urlOrFileOrPath)
                 .apply(
                         getDefaultRequestOption(loadingRes).centerCropTransform()
                 ).into(imageView);
     }
 
-    public void loadImageFitCenter(String url, ImageView imageView) {
-        loadImageFitCenter(url, imageView, R.drawable.ic_default);
+    public void loadImageFitCenter(Object urlOrFileOrPath, ImageView imageView) {
+        loadImageFitCenter(urlOrFileOrPath, imageView, R.drawable.ic_default);
     }
 
-    public void loadImageFitCenter(String url, ImageView imageView, int loadingRes) {
+    public void loadImageFitCenter(Object urlOrFileOrPath, ImageView imageView, int loadingRes) {
         Glide.with(this)
-                .load(url)
+                .load(urlOrFileOrPath)
                 .apply(
                         getDefaultRequestOption(loadingRes).fitCenterTransform()
                 ).into(imageView);
     }
 
-    public void loadImageCenterInside(String url, ImageView imageView) {
-        loadImageCenterInside(url, imageView, R.drawable.ic_default);
+    public void loadImageCenterInside(Object urlOrFileOrPath, ImageView imageView) {
+        loadImageCenterInside(urlOrFileOrPath, imageView, R.drawable.ic_default);
     }
 
-    public void loadImageCenterInside(String url, ImageView imageView, int loadingRes) {
+    public void loadImageCenterInside(Object urlOrFileOrPath, ImageView imageView, int loadingRes) {
         Glide.with(this)
-                .load(url)
+                .load(urlOrFileOrPath)
                 .apply(
                         getDefaultRequestOption(loadingRes).centerInsideTransform()
                 ).into(imageView);
     }
 
-    public void loadImageRound(String url, ImageView imageView) {
-        loadImageRound(url, imageView, R.drawable.ic_default);
+    public void loadImageRound(Object urlOrFileOrPath, ImageView imageView) {
+        loadImageRound(urlOrFileOrPath, imageView, R.drawable.ic_default);
     }
 
-    public void loadImageRound(String url, ImageView imageView, int loadingRes) {
+    public void loadImageRound(Object urlOrFileOrPath, ImageView imageView, int loadingRes) {
         Glide.with(this)
-                .load(url)
+                .load(urlOrFileOrPath)
                 .apply(
                         getDefaultRequestOption(loadingRes).circleCropTransform()
                 ).into(imageView);
