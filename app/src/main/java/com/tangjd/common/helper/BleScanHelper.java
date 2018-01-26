@@ -95,6 +95,8 @@ public abstract class BleScanHelper extends BaseActivity {
             return;
         }
         mFilterDeviceNameContains = getFilterDeviceName();
+        mFilterRssi = getFilterRssi();
+
         mayRequestPermission(new String[]{
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.BLUETOOTH,
@@ -176,33 +178,51 @@ public abstract class BleScanHelper extends BaseActivity {
     }
 
     // Device scan callback.
-    private BluetoothAdapter.LeScanCallback mLeScanCallback =
-            new BluetoothAdapter.LeScanCallback() {
-                @Override
-                public void onLeScan(final BluetoothDevice device, final int rssi, final byte[] scanRecord) {
-                    if (TextUtils.isEmpty(mFilterDeviceNameContains) ||
-                            (!TextUtils.isEmpty(device.getName()) && device.getName().toLowerCase().contains(mFilterDeviceNameContains.toLowerCase()))) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                // mLeDeviceListAdapter.addDevice(device, rssi, scanRecord);
-                                parse(device, rssi, scanRecord);
-                            }
-                        });
-                    }
-                }
-            };
+    private BluetoothAdapter.LeScanCallback mLeScanCallback = new BluetoothAdapter.LeScanCallback() {
+        @Override
+        public void onLeScan(final BluetoothDevice device, final int rssi, final byte[] scanRecord) {
+            boolean filterRssi = mFilterRssi != 0;
+            boolean filterDeviceName = !TextUtils.isEmpty(mFilterDeviceNameContains);
 
-    public void parse(final BluetoothDevice device, final int rssi, final byte[] scanRecord) {
-        // Log.e("TTT", "----------Rssi:" + rssi + "      " + device.getAddress() + "      " + device.getName());
-        processLogin(device, rssi, scanRecord,
-                (scanRecord[25] << 8 & 65280) + (scanRecord[26] & 255),
-                (scanRecord[27] << 8 & 65280) + (scanRecord[28] & 255));
+            boolean filterRssiMatch = false;
+            if (filterRssi) {
+                filterRssiMatch = mFilterRssi > rssi;
+            }
+            boolean filterDeviceNameMatch = false;
+            if (filterDeviceName) {
+                filterDeviceNameMatch = !TextUtils.isEmpty(device.getName()) && device.getName().toLowerCase().contains(mFilterDeviceNameContains.toLowerCase());
+            }
+
+            if (filterRssi && filterDeviceName && filterRssiMatch && filterDeviceNameMatch) {
+                parse(device, rssi, scanRecord);
+            } else if (filterRssi && filterRssiMatch) {
+                parse(device, rssi, scanRecord);
+            } else if (filterDeviceName && filterDeviceNameMatch) {
+                parse(device, rssi, scanRecord);
+            } else {
+                parse(device, rssi, scanRecord);
+            }
+        }
+    };
+
+    private void parse(final BluetoothDevice device, final int rssi, final byte[] scanRecord) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                // Log.e("TTT", "----------Rssi:" + rssi + "      " + device.getAddress() + "      " + device.getName());
+                processLogin(device, rssi, scanRecord,
+                        (scanRecord[25] << 8 & 65280) + (scanRecord[26] & 255),
+                        (scanRecord[27] << 8 & 65280) + (scanRecord[28] & 255));
+            }
+        });
     }
 
     public String mFilterDeviceNameContains;
+    public int mFilterRssi;
 
     public abstract String getFilterDeviceName();
+
+    public abstract int getFilterRssi();
 
     public abstract void processLogin(BluetoothDevice device, int rssi, byte[] scanRecord, int major, int minor);
 }
