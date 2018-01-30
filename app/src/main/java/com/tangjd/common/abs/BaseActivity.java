@@ -486,7 +486,7 @@ public class BaseActivity extends AppCompatActivity {
     // startActivity & Intent
     // ------ Start ------
     public static String EXTRA_COMMON_DATA_BEAN = "extra_data_bean";
-    public static int REQUEST_CODE_COMMON = 9999;
+    public static final int REQUEST_CODE_COMMON = 9999;
     public Serializable mCommonBean;
 
     @Override

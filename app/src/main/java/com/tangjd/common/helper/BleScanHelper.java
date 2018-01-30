@@ -190,18 +190,13 @@ public abstract class BleScanHelper extends BaseActivity {
             }
             boolean filterDeviceNameMatch = false;
             if (filterDeviceName) {
-                filterDeviceNameMatch = !TextUtils.isEmpty(device.getName()) && device.getName().toLowerCase().contains(mFilterDeviceNameContains.toLowerCase());
+                filterDeviceNameMatch = (!TextUtils.isEmpty(device.getName())) && device.getName().toLowerCase().contains(mFilterDeviceNameContains.toLowerCase());
             }
 
-            if (filterRssi && filterDeviceName && filterRssiMatch && filterDeviceNameMatch) {
-                parse(device, rssi, scanRecord);
-            } else if (filterRssi && filterRssiMatch) {
-                parse(device, rssi, scanRecord);
-            } else if (filterDeviceName && filterDeviceNameMatch) {
-                parse(device, rssi, scanRecord);
-            } else {
-                parse(device, rssi, scanRecord);
+            if ((filterRssi && (!filterRssiMatch)) || (filterDeviceName && (!filterDeviceNameMatch))) {
+                return;
             }
+            parse(device, rssi, scanRecord);
         }
     };
 

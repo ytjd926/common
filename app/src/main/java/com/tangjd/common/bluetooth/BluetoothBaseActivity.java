@@ -147,9 +147,7 @@ public abstract class BluetoothBaseActivity extends BaseActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mChatService != null) {
-            mChatService.stop();
-        }
+        stopBTListener();
     }
 
 //	/**
@@ -198,19 +196,6 @@ public abstract class BluetoothBaseActivity extends BaseActivity {
     public void connectDevice(String deviceAddress, boolean secure) {
         BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(deviceAddress);
         mChatService.connect(device, secure);
-    }
-
-    /**
-     * Updates the status on the action bar.
-     *
-     * @param subTitle status
-     */
-    public void setStatus(CharSequence subTitle) {
-//		final ActionBar actionBar = getActionBar();
-//		if (null == actionBar) {
-//			return;
-//		}
-//		actionBar.setSubtitle(subTitle);
     }
 
     /**
@@ -353,10 +338,15 @@ public abstract class BluetoothBaseActivity extends BaseActivity {
     }
 
     protected synchronized void onBtStateChanged(int btState) {
+        // TODO onBtStateChanged
+    }
 
+    public void setStatus(CharSequence subTitle) {
+        // TODO set status in sub class
     }
 
     protected synchronized void onBtConnectionLost() {
-
+        // TODO onBtConnectionLost
     }
+
 }
