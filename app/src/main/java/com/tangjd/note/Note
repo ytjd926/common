@@ -1,7 +1,17 @@
 1.build.gradle in Project
     repositories {
-        maven { url "https://www.jitpack.io" }
-        maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
-        google()
+        mavenLocal()
+        maven { url "https://jitpack.io" }
+        maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
+        maven { url 'http://maven.aliyun.com/nexus/content/repositories/jcenter' }
+        maven {
+            url 'http://maven.google.com/'
+            name 'Google'
+        }
         jcenter()
+        mavenCentral()
+    }
+
+    dependencies {
+        annotationProcessor 'com.github.bumptech.glide:compiler:4.5.0'
     }

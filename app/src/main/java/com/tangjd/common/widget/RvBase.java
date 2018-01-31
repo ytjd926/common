@@ -48,13 +48,19 @@ public abstract class RvBase<T> extends RecyclerView {
     }
 
     public void setEmptyViewText(String content, boolean withRetryTip) {
+        setEmptyViewText(content, withRetryTip, 0);
+    }
+
+    public void setEmptyViewText(String content, boolean withRetryTip, int drawableTopResId) {
         if (withRetryTip) {
             content = content + "\n点击屏幕重试";
         }
-        if (!TextUtils.isEmpty(content)) {
-            TextView textView = ((TextView) mEmptyView.findViewById(R.id.tv_msg));
-            if (textView != null) {
-                textView.setText(content);
+        TextView textView = ((TextView) mEmptyView.findViewById(R.id.tv_msg));
+        if (textView != null) {
+            textView.setText(content);
+            if (drawableTopResId != 0) {
+                textView.setCompoundDrawablesWithIntrinsicBounds(0, drawableTopResId, 0, 0);
+                textView.setCompoundDrawablePadding(30);
             }
         }
     }
@@ -158,7 +164,8 @@ public abstract class RvBase<T> extends RecyclerView {
     public void onGetDataSuccess(List<T> beans) {
         setData(beans);
         if (beans == null) {
-            showErrorView("数据出错", true);
+            // showErrorView("数据出错", true);
+            showEmptyView();
         } else if (beans.size() == 0) {
             showEmptyView();
         } else {
