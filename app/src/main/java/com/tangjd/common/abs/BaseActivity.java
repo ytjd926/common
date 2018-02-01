@@ -23,7 +23,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.tangjd.common.R;
@@ -427,11 +426,8 @@ public class BaseActivity extends AppCompatActivity {
 
     // Glide
     // ------ Start ------
-    public RequestOptions getDefaultRequestOption(int loadingRes) {
-        return RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL)
-                .placeholder(loadingRes)
-                .error(loadingRes)
-                .fallback(loadingRes);
+    public RequestOptions getDefaultRequestOption() {
+        return RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL);
     }
 
     public void loadImageCenterCrop(Object urlOrFileOrPath, ImageView imageView) {
@@ -439,10 +435,13 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public void loadImageCenterCrop(Object urlOrFileOrPath, ImageView imageView, int loadingRes) {
-        Glide.with(this)
+        GlideApp.with(this)
                 .load(urlOrFileOrPath)
+                .placeholder(loadingRes)
+                .error(loadingRes)
+                .fallback(loadingRes)
                 .apply(
-                        getDefaultRequestOption(loadingRes).centerCropTransform()
+                        getDefaultRequestOption().centerCropTransform()
                 ).into(imageView);
     }
 
@@ -451,10 +450,13 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public void loadImageFitCenter(Object urlOrFileOrPath, ImageView imageView, int loadingRes) {
-        Glide.with(this)
+        GlideApp.with(this)
                 .load(urlOrFileOrPath)
+                .placeholder(loadingRes)
+                .error(loadingRes)
+                .fallback(loadingRes)
                 .apply(
-                        getDefaultRequestOption(loadingRes).fitCenterTransform()
+                        getDefaultRequestOption().fitCenterTransform()
                 ).into(imageView);
     }
 
@@ -463,10 +465,13 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public void loadImageCenterInside(Object urlOrFileOrPath, ImageView imageView, int loadingRes) {
-        Glide.with(this)
+        GlideApp.with(this)
                 .load(urlOrFileOrPath)
+                .placeholder(loadingRes)
+                .error(loadingRes)
+                .fallback(loadingRes)
                 .apply(
-                        getDefaultRequestOption(loadingRes).centerInsideTransform()
+                        getDefaultRequestOption().centerInsideTransform()
                 ).into(imageView);
     }
 
@@ -475,10 +480,13 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public void loadImageRound(Object urlOrFileOrPath, ImageView imageView, int loadingRes) {
-        Glide.with(this)
+        GlideApp.with(this)
                 .load(urlOrFileOrPath)
+                .placeholder(loadingRes)
+                .error(loadingRes)
+                .fallback(loadingRes)
                 .apply(
-                        getDefaultRequestOption(loadingRes).circleCropTransform()
+                        getDefaultRequestOption().circleCropTransform()
                 ).into(imageView);
     }
     // ------ End ------

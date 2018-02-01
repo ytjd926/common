@@ -11,7 +11,3 @@
         jcenter()
         mavenCentral()
     }
-
-    dependencies {
-        annotationProcessor 'com.github.bumptech.glide:compiler:4.5.0'
-    }
