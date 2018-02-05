@@ -1,0 +1,3 @@
+Set
+checkBox.setOnCheckedChangeListener(null);
+Before setChecked(boolean checked)

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="IdentifyView">
+        <!-- 随机点数 -->
+        <attr name="identify_point_num" format="integer" />
+        <!-- 随机线数 -->
+        <attr name="identify_line_num" format="integer" />
+        <!-- 验证码长度 -->
+        <attr name="identify_text_length" format="integer" />
+        <!-- 验证码字体大小-->
+        <attr name="identify_text_size" format="dimension" />
+        <!-- 验证码字体颜色 -->
+        <attr name="identify_text_color" format="color" />
+        <!-- 背景颜色-->
+        <attr name="identify_bg_color" format="color" />
+    </declare-styleable>
+</resources>

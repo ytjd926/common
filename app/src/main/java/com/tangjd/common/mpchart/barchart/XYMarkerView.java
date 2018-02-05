@@ -2,6 +2,7 @@
 package com.tangjd.common.mpchart.barchart;
 
 import android.content.Context;
+import android.graphics.Canvas;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.components.MarkerView;
@@ -36,12 +37,20 @@ public class XYMarkerView extends MarkerView {
 
     // callbacks everytime the MarkerView is redrawn, can be used to update the
     // content (user-interface)
+    private float mValueY = 0;
+
     @Override
     public void refreshContent(Entry e, Highlight highlight) {
-
         tvContent.setText(xAxisValueFormatter.getFormattedValue(e.getX(), null) + ": " + format.format(e.getY()) + mUnit);
-
+        mValueY = e.getY();
         super.refreshContent(e, highlight);
+    }
+
+    @Override
+    public void draw(Canvas canvas, float posX, float posY) {
+        if (mValueY != 0) {
+            super.draw(canvas, posX, posY);
+        }
     }
 
     @Override

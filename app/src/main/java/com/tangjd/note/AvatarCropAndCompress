@@ -1,0 +1,150 @@
+import com.werb.permissionschecker.PermissionChecker;
+import com.yalantis.ucrop.UCrop;
+import me.iwf.photopicker.PhotoPicker;
+import top.zibin.luban.Luban;
+import top.zibin.luban.OnCompressListener;
+
+/**
+ * Created by tangjd on 2017/11/28.
+ */
+
+public class AvatarCropAndCompress extends BaseActivity {
+    static final String[] PERMISSIONS = new String[]{
+            Manifest.permission.CAMERA,
+            Manifest.permission.READ_EXTERNAL_STORAGE
+    };
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        initView();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, final int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == UCrop.REQUEST_CROP) {
+            if (resultCode == RESULT_OK) {
+                try {
+                    final Uri resultUri = UCrop.getOutput(data);
+                    showProgressDialog();
+                    File file = new File(resultUri.getPath());
+                    Log.e("TTT", file.length() + "");
+                    Luban.with(this)
+                            .load(file) // 传入要压缩的图片列表
+                            .ignoreBy(100) // 忽略不压缩图片的大小
+                            .setTargetDir(FileUtil.getCustomDir(this, "avatar").getAbsolutePath()) // 设置压缩后文件存储位置
+                            .setCompressListener(new OnCompressListener() { //设置回调
+                                @Override
+                                public void onStart() {
+                                    // TODO 压缩开始前调用，可以在方法内启动 loading UI
+                                }
+
+                                @Override
+                                public void onSuccess(File file) {
+                                    // TODO 压缩成功后调用，返回压缩后的图片文件
+                                    try {
+                                        FileInputStream inputFile = new FileInputStream(file);
+                                        final byte[] buffer = new byte[(int) file.length()];
+                                        Log.e("TTT", file.length() + "");
+                                        inputFile.read(buffer);
+                                        inputFile.close();
+                                        final StringBuilder sb = new StringBuilder("data:image/png;base64,");
+                                        sb.append(new String(Base64.encode(buffer, Base64.DEFAULT), "UTF-8"));
+                                        Api.uploadPhoto(sb.toString(), new JsonApiBase.OnJsonResponseListener() {
+                                            @Override
+                                            public void onResponse(JSONObject response) {
+                                                Result result = Result.parse(response);
+                                                if (result.isSuccess()) {
+                                                    try {
+                                                        JSONObject obj = new JSONObject(result.mData);
+                                                        String avatar = obj.optString("avatar");
+                                                        loadImageRound(avatar, ivPhoto, R.drawable.ic_avatar_default);
+                                                        SignInBean bean = App.getApp().getSignInBean();
+                                                        bean.avatar = avatar;
+                                                        App.getApp().setSignInBean(bean);
+                                                    } catch (JSONException e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                } else {
+                                                    onError(result.mMsg);
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onError(String error) {
+                                                showTipDialog(error);
+                                            }
+
+                                            @Override
+                                            public void onFinish(boolean withoutException) {
+                                                dismissProgressDialog();
+                                            }
+                                        });
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                        dismissProgressDialog();
+                                        showTipDialog("上传失败，请重试");
+                                    }
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+                                    // TODO 当压缩过程出现问题时调用
+                                    showTipDialog(e.getMessage());
+                                    dismissProgressDialog();
+                                }
+                            }).launch();    //启动压缩
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    dismissProgressDialog();
+                    showTipDialog("上传失败，请重试");
+                }
+            } else if (resultCode == UCrop.RESULT_ERROR) {
+                final Throwable cropError = UCrop.getError(data);
+                showTipDialog(cropError.getMessage());
+            }
+        }
+        if (resultCode == RESULT_OK && requestCode == PhotoPicker.REQUEST_CODE) {
+            if (data != null) {
+                final ArrayList<String> paths = data.getStringArrayListExtra(PhotoPicker.KEY_SELECTED_PHOTOS);
+                if (paths.size() == 0) {
+                    return;
+                }
+                UCrop.Options options = new UCrop.Options();
+                options.setToolbarColor(App.getApp().getCurrPrimaryColor());
+                options.setStatusBarColor(App.getApp().getCurrPrimaryColor());
+                File file = new File(paths.get(0));
+                Uri desUri = Uri.fromFile(new File(FileUtil.getCustomDir(this, "avatar").getAbsolutePath() + System.currentTimeMillis() + ".png"));
+                UCrop.of(Uri.fromFile(file), desUri)
+                        .withAspectRatio(1, 1)
+                        .withOptions(options)
+                        .start(this);
+            }
+        }
+    }
+
+    private void pickPhoto() {
+        PhotoPicker.builder()
+                .setPhotoCount(1)
+                .setShowCamera(true)
+                .setShowGif(false)
+                .setPreviewEnabled(false)
+                .start(this, PhotoPicker.REQUEST_CODE);
+    }
+
+    private void initView() {
+        loadImageRound(App.getApp().getSignInBean().avatar, ivPhoto, R.drawable.ic_avatar_default);
+        btnChangePhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mayRequestPermission(PERMISSIONS, new PermissionRequestCallback() {
+                            @Override
+                            public void onSuccess() {
+                                pickPhoto();
+                            }
+                        });
+            }
+        });
+    }
+}

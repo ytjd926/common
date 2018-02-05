@@ -39,6 +39,7 @@ public class BarChartHelper {
     }
 
     public void initBarChart(String unit, int xAxisLabelCount, IAxisValueFormatter xAxisLabelFormatter) {
+        mChart.setNoDataText("没有数据");
         mChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
             @Override
             public void onValueSelected(Entry e, Highlight h) {
@@ -168,6 +169,8 @@ public class BarChartHelper {
             data.setValueTextSize(10f);
             data.setBarWidth(0.9f);
             mChart.setData(data);
+
+            mChart.invalidate();
         }
     }
 

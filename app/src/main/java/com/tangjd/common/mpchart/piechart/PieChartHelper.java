@@ -30,7 +30,7 @@ public class PieChartHelper {
     }
 
     public void initPieChart() {
-
+        mChart.setNoDataText("没有数据");
         mChart.setUsePercentValues(true);
         mChart.getDescription().setEnabled(false);
         mChart.setExtraOffsets(5, 10, 5, 5);
