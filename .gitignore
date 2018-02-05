@@ -29,3 +29,7 @@ proguard/
 *.log
 
 # gradle-wrapper.properties
+
+UI/
+Docs/
+release/
