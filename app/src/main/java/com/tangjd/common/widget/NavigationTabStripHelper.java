@@ -33,7 +33,7 @@ public class NavigationTabStripHelper {
 //            } else if (position == 1) {
 //                setToolbarTitle("谱线数据");
 //            }
-//            ((BaseFragment) ((FragmentPagerAdapter) viewPager.getAdapter()).getItem(position)).getDataIfNeeded();
+//            ((BaseFragment) ((FragmentPagerAdapter) viewPager.getAdapter()).getItem(position)).getDataOnCreateView();
 //        }
 //
 //        @Override
@@ -47,7 +47,7 @@ public class NavigationTabStripHelper {
 //        viewPager.post(new Runnable() {
 //            @Override
 //            public void run() {
-//                ((BaseFragment) ((FragmentPagerAdapter) viewPager.getAdapter()).getItem(0)).getDataIfNeeded();
+//                ((BaseFragment) ((FragmentPagerAdapter) viewPager.getAdapter()).getItem(0)).getDataOnCreateView();
 //            }
 //        });
 
@@ -81,7 +81,7 @@ public class NavigationTabStripHelper {
 
                     @Override
                     public void onPageSelected(int position) {
-                        ((BaseFragment) ((FragmentPagerAdapter) viewPager.getAdapter()).getItem(position)).getDataIfNeeded();
+                        ((BaseFragment) ((FragmentPagerAdapter) viewPager.getAdapter()).getItem(position)).getDataOnCreateView();
                     }
 
                     @Override
@@ -93,7 +93,7 @@ public class NavigationTabStripHelper {
         viewPager.post(new Runnable() {
             @Override
             public void run() {
-                ((BaseFragment) ((FragmentPagerAdapter) viewPager.getAdapter()).getItem(0)).getDataIfNeeded();
+                ((BaseFragment) ((FragmentPagerAdapter) viewPager.getAdapter()).getItem(0)).getDataOnCreateView();
             }
         });
     }
@@ -122,7 +122,7 @@ public class NavigationTabStripHelper {
         viewPager.post(new Runnable() {
             @Override
             public void run() {
-                ((BaseFragment) ((FragmentPagerAdapter) viewPager.getAdapter()).getItem(0)).getDataIfNeeded();
+                ((BaseFragment) ((FragmentPagerAdapter) viewPager.getAdapter()).getItem(0)).getDataOnCreateView();
             }
         });
         viewPager.addOnPageChangeListener(
@@ -134,7 +134,7 @@ public class NavigationTabStripHelper {
 
                     @Override
                     public void onPageSelected(int position) {
-                        ((BaseFragment) ((FragmentPagerAdapter) viewPager.getAdapter()).getItem(position)).getDataIfNeeded();
+                        ((BaseFragment) ((FragmentPagerAdapter) viewPager.getAdapter()).getItem(position)).getDataOnCreateView();
                     }
 
                     @Override

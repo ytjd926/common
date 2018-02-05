@@ -5,7 +5,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.tangjd.common.R;
 import com.tangjd.common.utils.InvokeUtil;
 import com.tangjd.common.widget.HintSpinnerAdapter;
 
@@ -18,6 +17,13 @@ import java.util.List;
  */
 
 public class HintSpinnerAdapterHelper {
+    public static void set(Spinner spinner, String hintMsg, String[] data) {
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(spinner.getContext(), android.R.layout.simple_spinner_dropdown_item, data);
+        TextView hintView = (TextView) LayoutInflater.from(spinner.getContext()).inflate(android.R.layout.simple_spinner_dropdown_item, spinner, false);
+        hintView.setText(hintMsg);
+        spinner.setAdapter(new HintSpinnerAdapter(adapter, hintView, spinner.getContext()));
+    }
+
     public static void set(Spinner spinner, String hintMsg, List<String> data) {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(spinner.getContext(), android.R.layout.simple_spinner_dropdown_item, data);
         TextView hintView = (TextView) LayoutInflater.from(spinner.getContext()).inflate(android.R.layout.simple_spinner_dropdown_item, spinner, false);

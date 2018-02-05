@@ -31,7 +31,7 @@ public abstract class BaseFragment extends Fragment {
                 parent.removeView(mLayoutView);
             }
         }
-        getDataIfNeeded();
+        getDataOnCreateView();
         return mLayoutView;
     }
 
@@ -39,12 +39,12 @@ public abstract class BaseFragment extends Fragment {
 
     protected abstract void initView();
 
-    public void getDataIfNeeded() {
+    public void getDataOnCreateView() {
         if (!mDataLoaded) {
-            getData();
+            getDataJustOnce();
             mDataLoaded = true;
         }
     }
 
-    protected abstract void getData();
+    protected abstract void getDataJustOnce();
 }
