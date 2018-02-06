@@ -1,0 +1,84 @@
+public class Api {
+    private static final String HTTP_SCHEMA;
+    private static final String HTTP_SCHEMA_SUFFIX;
+    private static String HOST;
+    private static ApiService sApiService;
+    private static ApiService sApiService2;
+
+    static {
+        HTTP_SCHEMA = "http";
+        HTTP_SCHEMA_SUFFIX = "://";
+        HOST = "114.55.232.170:10005";
+
+        sApiService = ApiStringBase.getStringRetrofit(getDomainName()).create(ApiService.class);
+        sApiService2 = ApiStringBase.getStringRetrofit("http://mapapi.minorfish.com").create(ApiService.class);
+    }
+
+    public static String getDomainName() {
+        return HTTP_SCHEMA + HTTP_SCHEMA_SUFFIX + HOST;
+    }
+
+    public static String getHeader() {
+        return App.getApp().getSignInBean().token;
+    }
+
+    public static void delBeacons(String selectBeaconIds, OnStringRespListener listener) {
+        JSONObject body = new JSONObject();
+        try {
+            body.put("ids", selectBeaconIds);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        ApiStringBase.enqueue(sApiService.delBeacons(getHeader(), body.toString()), listener);
+    }
+
+    public interface ApiService {
+        @POST("/minorfish/iot/app/auth/login")
+        Call<String> signIn(@Body String body);
+
+        @GET("/minorfish/iot/app/drop/listInst")
+        Call<String> getSpinnerData(@Header("X-Auth-Token") String token);
+
+        @POST("/minorfish/iot/app/beacon/findByPage")
+        Call<String> getBeacons(@Header("X-Auth-Token") String token, @Body String body);
+
+        @POST("/minorfish/iot/ap/listAll")
+        Call<String> getAPs(@Header("X-Auth-Token") String token, @Body String body);
+
+        @POST("/minorfish/iot/app/beacon/add")
+        Call<String> addBeacon(@Header("X-Auth-Token") String token, @Body String body);
+
+        @GET("/restmap/patrol/floor/_getsvg")
+        Call<String> getMap(@Header("X-Auth-Token") String token, @Query("id") int floorId);
+
+        @POST("/minorfish/iot/ap/position")
+        Call<String> addAP(@Header("X-Auth-Token") String token, @Body String body);
+
+        @POST("/minorfish/iot/app/beacon/bindAp")
+        Call<String> bindBeaconsToAp(@Header("X-Auth-Token") String token, @Body String body);
+
+        @POST("/minorfish/iot/app/beacon/unbindAp")
+        Call<String> unbindBeacons(@Header("X-Auth-Token") String token, @Body String body);
+
+        @POST("/minorfish/iot/app/beacon/delBatch")
+        Call<String> delBeacons(@Header("X-Auth-Token") String token, @Body String body);
+
+        @GET("/minorfish/iot/ap/unposition/{id}")
+        Call<String> unpositionAP(@Header("X-Auth-Token") String token, @Path("id") int apId);
+
+        @GET("/minorfish/iot/app/beacon/del/{id}")
+        Call<String> delBeacon(@Header("X-Auth-Token") String token, @Path("id") int beaconId);
+
+        @POST("/minorfish/iot/app/inspect/data")
+        Call<String> uploadPatrol(@Header("X-Auth-Token") String token, @Body String body);
+
+        @POST("/minorfish/iot/dirctionory/add")
+        Call<String> config(@Header("X-Auth-Token") String token, @Body String body);
+
+        @POST("/minorfish/iot/dirctionory/list")
+        Call<String> getCodeList(@Header("X-Auth-Token") String token, @Body String body);
+
+        @POST("/minorfish/iot/app/beacon/update")
+        Call<String> updateBeacon(@Header("X-Auth-Token") String token, @Body String body);
+    }
+}

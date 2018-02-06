@@ -1,0 +1,35 @@
+package com.tangjd.note;
+
+import com.tangjd.common.abs.JsonApiBase;
+
+import org.json.JSONObject;
+
+public abstract class OnResponseListener implements JsonApiBase.OnJsonResponseListener {
+    @Override
+    public void onResponse(JSONObject data) {
+        Result result = Result.parse(data);
+        if (result.isSuccess()) {
+            onRespSuccess(result.mData);
+        } else {
+            onRespFail(result.mMsg);
+        }
+    }
+
+    @Override
+    public void onError(String error) {
+        onRespError(error);
+    }
+
+    @Override
+    public void onFinish(boolean withoutException) {
+        onRespFinish(withoutException);
+    }
+
+    public abstract void onRespSuccess(String data);
+
+    public abstract void onRespFail(String msg);
+
+    public abstract void onRespError(String error);
+
+    public abstract void onRespFinish(boolean withoutException);
+}

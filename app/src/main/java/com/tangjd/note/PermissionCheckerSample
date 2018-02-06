@@ -1,18 +1,21 @@
+https://github.com/Werb/PermissionsCheckerSample
 
+mayRequestPermission(new String[]{
+        Manifest.permission.ACCESS_FINE_LOCATION,
+        Manifest.permission.BLUETOOTH,
+        Manifest.permission.BLUETOOTH_ADMIN
+}, new PermissionRequestCallback() {
+    @Override
+    public void onSuccess() {
+        if (mBluetoothAdapter.enable()) {
+            scanLeDevice(true);
+        } else {
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+        }
+    }
+});
 
-
-        mayRequestPermission(new String[]{
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.BLUETOOTH,
-                Manifest.permission.BLUETOOTH_ADMIN
-        }, new PermissionRequestCallback() {
-            @Override
-            public void onSuccess() {
-                if (mBluetoothAdapter.enable()) {
-                    scanLeDevice(true);
-                } else {
-                    Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                    startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-                }
-            }
-        });
+permissionChecker = new PermissionChecker(this); // 初始化，必需
+permissionChecker.setTitle(getString(R.string.check_info_title)); // 权限拒绝后的提示，非必需
+permissionChecker.setMessage(getString(R.string.check_info_message)); // 不写会有默认值，如上方截图所示

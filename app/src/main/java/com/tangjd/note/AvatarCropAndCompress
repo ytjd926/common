@@ -1,3 +1,7 @@
+https://github.com/Yalantis/uCrop
+https://github.com/Curzibn/Luban
+
+
 import com.werb.permissionschecker.PermissionChecker;
 import com.yalantis.ucrop.UCrop;
 import me.iwf.photopicker.PhotoPicker;

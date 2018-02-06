@@ -1,0 +1,51 @@
+public class Api {
+    private static final String HTTP_SCHEMA;
+    private static final String HTTP_SCHEMA_SUFFIX;
+    public static String HOST;
+
+    static {
+        HTTP_SCHEMA = "http";
+        HTTP_SCHEMA_SUFFIX = "://";
+        HOST = "192.168.2.33:9099";
+    }
+
+    public static String getDomainName() {
+        return HTTP_SCHEMA + HTTP_SCHEMA_SUFFIX + HOST;
+    }
+
+    public static Map<String, String> getHeaders() {
+        if (App.getApp().getSignInBean() == null || TextUtils.isEmpty(App.getApp().getSignInBean().mToken)) {
+            return null;
+        }
+        Map<String, String> headers = new HashMap<>();
+        headers.put("X-Auth-Token", App.getApp().getSignInBean().mToken);
+        return headers;
+    }
+
+    public static void checkWeight(String weight, JsonApiBase.OnJsonResponseListener listener) {
+        String url = getDomainName() + "/api/trash-bag/store-check.do";
+        JSONObject param = new JSONObject();
+        try {
+            param.put("weight", weight);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        JsonApiBase.doPostRequest(url, param, getHeaders(), listener);
+    }
+
+    public static void uploadSignatureFile(File signatureFile, StringCallback callback) {
+//        Map<String, String> params = new HashMap<>();
+//        params.put("message", content);
+        String url = getDomainName() + "/api/sign/upload.do";
+        OkHttpUtils.post()
+                .headers(getHeaders())
+                .addFile("file", "signature_file.png", signatureFile)
+                .url(url)
+//                .params(params)
+                .build()
+                .connTimeOut(5000)
+                .writeTimeOut(30000)
+                .readTimeOut(30000)
+                .execute(callback);
+    }
+}

@@ -1,0 +1,36 @@
+https://github.com/Devlight/NavigationTabStrip
+
+NavigationTabStripHelper.set(this, tabStrip, viewPager, new String[]{"日", "月", "年"},
+            new String[]{FragmentDay.class.getName(), FragmentMonth.class.getName(), FragmentYear.class.getName()},
+            null);
+
+
+<com.gigamole.navigationtabstrip.NavigationTabStrip
+    android:id="@+id/tab_strip"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/btn_height"
+    app:nts_active_color="@color/colorPrimaryDark" // 选中Title颜色
+    app:nts_inactive_color="@color/light_black_3" // 未选中Title颜色
+    app:nts_color="@color/colorPrimaryDark" // 导航点或线的颜色
+    app:nts_corners_radius="3.5dp" // 导航的corners radius
+    app:nts_factor="0.8"
+    app:nts_gravity="bottom" // 位置 top or bottom
+    app:nts_size="14sp" // 字体大小
+    app:nts_type="point" // 类型 line or point
+    app:nts_typeface="fonts/moon.otf" // 字体
+    app:nts_weight="7dp" />
+
+weight:
+allows you to set weight(height) of strip.
+factor:
+allows you to set strip resize factor.
+titles:
+allows you to set NTS titles. This is your tabs.
+view pager:
+allows you to connect NTS with ViewPager. If you want your can also set OnPageChangeListener.
+corners radius:
+allows you to set corners radius of strip.
+animation duration:
+allows you to set animation duration.
+tab strip listener:
+allows you to set listener which triggering on start or on end when you set tab index.
