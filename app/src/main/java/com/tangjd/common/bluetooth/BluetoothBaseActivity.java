@@ -12,13 +12,12 @@ import android.widget.Toast;
 
 import com.tangjd.common.abs.BaseActivity;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.io.Serializable;
 import java.util.Set;
 
 public abstract class BluetoothBaseActivity extends BaseActivity {
 
-    private static final String TAG = "BluetoothBaseActivity";
+    private static final String TAG = "TTTTTT";
 
     // Intent request codes
     public static final int REQUEST_CONNECT_DEVICE_SECURE = 1;
@@ -26,6 +25,11 @@ public abstract class BluetoothBaseActivity extends BaseActivity {
     public static final int REQUEST_ENABLE_BT = 3;
 
     public static final String EXTRA_FILTER_DEVICE_NAME_CONTAINS = "extra_filter_device_name_contains";
+    public static final String EXTRA_SEARCH_DEVICE_TYPE = "extra_search_device_type";
+
+    public enum SearchDevicesType implements Serializable {
+        ShowList, Connect
+    }
 
     /**
      * Name of the connected device
@@ -112,12 +116,15 @@ public abstract class BluetoothBaseActivity extends BaseActivity {
         }
     }
 
+    public String mNewDeviceAddress;
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case REQUEST_CONNECT_DEVICE_SECURE:
                 // When DeviceListActivity returns with a device to connect
                 if (resultCode == Activity.RESULT_OK) {
+                    mNewDeviceAddress = data.getStringExtra(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
                     connectDevice(data, true);
                 } else {
                     Toast.makeText(this, "蓝牙连接失败", Toast.LENGTH_SHORT).show();
@@ -126,6 +133,7 @@ public abstract class BluetoothBaseActivity extends BaseActivity {
             case REQUEST_CONNECT_DEVICE_INSECURE:
                 // When DeviceListActivity returns with a device to connect
                 if (resultCode == Activity.RESULT_OK) {
+                    mNewDeviceAddress = data.getStringExtra(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
                     connectDevice(data, false);
                 } else {
                     Toast.makeText(this, "蓝牙连接失败", Toast.LENGTH_SHORT).show();
@@ -296,44 +304,60 @@ public abstract class BluetoothBaseActivity extends BaseActivity {
         return pairedDevices;
     }
 
-    protected void searchDeviceForSecureConnection() {
+    public void searchDeviceForSecureConnection() {
         // Launch the DeviceListActivity to see devices and do scan
-        Intent serverIntent = new Intent(this, DeviceListActivity.class);
-        startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_SECURE);
+        searchDeviceForSecureConnection(null);
     }
 
-    protected void searchDeviceForSecureConnection(String filterDeviceNameContains) {
+    public void searchDeviceForSecureConnection(String filterDeviceNameContains) {
         // Launch the DeviceListActivity to see devices and do scan
         Intent serverIntent = new Intent(this, DeviceListActivity.class);
         serverIntent.putExtra(EXTRA_FILTER_DEVICE_NAME_CONTAINS, filterDeviceNameContains);
+        serverIntent.putExtra(EXTRA_SEARCH_DEVICE_TYPE, SearchDevicesType.ShowList);
         startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_SECURE);
     }
 
     public void searchDeviceForInsecureConnection() {
         // Launch the DeviceListActivity to see devices and do scan
-        Intent serverIntent = new Intent(this, DeviceListActivity.class);
-        startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_INSECURE);
+        searchDeviceForInsecureConnection(null);
     }
 
     public void searchDeviceForInsecureConnection(String filterDeviceNameContains) {
         // Launch the DeviceListActivity to see devices and do scan
         Intent serverIntent = new Intent(this, DeviceListActivity.class);
         serverIntent.putExtra(EXTRA_FILTER_DEVICE_NAME_CONTAINS, filterDeviceNameContains);
+        serverIntent.putExtra(EXTRA_SEARCH_DEVICE_TYPE, SearchDevicesType.ShowList);
+        startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_INSECURE);
+    }
+
+    public void searchAndConnectDeviceForSecure(String filterDeviceNameContains) {
+        // Launch the DeviceListActivity to see devices and do scan
+        Intent serverIntent = new Intent(this, DeviceListActivity.class);
+        serverIntent.putExtra(EXTRA_FILTER_DEVICE_NAME_CONTAINS, filterDeviceNameContains);
+        serverIntent.putExtra(EXTRA_SEARCH_DEVICE_TYPE, SearchDevicesType.Connect);
+        startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_SECURE);
+    }
+
+    public void searchAndConnectDeviceForInsecure(String filterDeviceNameContains) {
+        // Launch the DeviceListActivity to see devices and do scan
+        Intent serverIntent = new Intent(this, DeviceListActivity.class);
+        serverIntent.putExtra(EXTRA_FILTER_DEVICE_NAME_CONTAINS, filterDeviceNameContains);
+        serverIntent.putExtra(EXTRA_SEARCH_DEVICE_TYPE, SearchDevicesType.Connect);
         startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_INSECURE);
     }
 
     protected synchronized void onBtDataReceive(int length, byte[] receiptData) {
         if (Constants.LOGABLE) {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            baos.write(receiptData, 0, length);
-            byte[] data = baos.toByteArray();
-            Log.e(TAG, "BtReceipt: " + ByteUtil.bytesToHexString(data));
-            data = null;
-            try {
-                baos.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+//            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//            baos.write(receiptData, 0, length);
+//            byte[] data = baos.toByteArray();
+            Log.e(TAG, "BtReceipt: " + ByteUtil.bytesToHexString(receiptData));
+//            data = null;
+//            try {
+//                baos.close();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
         }
     }
 

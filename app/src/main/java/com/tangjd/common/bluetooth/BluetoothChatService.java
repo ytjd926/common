@@ -26,6 +26,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
+import com.tangjd.common.utils.*;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -455,7 +457,7 @@ public class BluetoothChatService {
                     // Read from the InputStream
                     bytes = mmInStream.read(buffer);
                     // notify bluetooth data received
-                    ((BluetoothBaseActivity) mContext).onBtDataReceive(bytes, buffer);
+                    ((BluetoothBaseActivity) mContext).onBtDataReceive(bytes, com.tangjd.common.utils.ByteUtil.subByteArr(buffer, 0, bytes));
 
                 } catch (IOException e) {
                     // Log.e(TAG, "disconnected", e);

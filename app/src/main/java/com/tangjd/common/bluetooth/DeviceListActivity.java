@@ -65,6 +65,7 @@ public class DeviceListActivity extends Activity {
     private ArrayAdapter<String> mNewDevicesArrayAdapter;
 
     private String mFilterDeviceNameContains;
+    private BluetoothBaseActivity.SearchDevicesType mSearchDeviceType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,18 +75,10 @@ public class DeviceListActivity extends Activity {
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.bt_device_list);
         mFilterDeviceNameContains = getIntent().getStringExtra(BluetoothBaseActivity.EXTRA_FILTER_DEVICE_NAME_CONTAINS);
+        mSearchDeviceType = (BluetoothBaseActivity.SearchDevicesType) getIntent().getSerializableExtra(BluetoothBaseActivity.EXTRA_SEARCH_DEVICE_TYPE);
 
         // Set result CANCELED in case the user backs out
         setResult(Activity.RESULT_CANCELED);
-
-        // Initialize the button to perform device discovery
-        Button scanButton = (Button) findViewById(R.id.button_scan);
-        scanButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                doDiscovery();
-                v.setVisibility(View.GONE);
-            }
-        });
 
         // Initialize array adapters. One for already paired devices and
         // one for newly discovered devices
@@ -130,6 +123,9 @@ public class DeviceListActivity extends Activity {
                 }
                 if (device.getName().toLowerCase().contains(mFilterDeviceNameContains.toLowerCase())) {
                     pairedDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+                    if (mSearchDeviceType == BluetoothBaseActivity.SearchDevicesType.Connect) {
+                        setResult(device.getAddress());
+                    }
                     return;
                 }
             }
@@ -137,6 +133,26 @@ public class DeviceListActivity extends Activity {
             String noDevices = "没有已配对的设备";
             pairedDevicesArrayAdapter.add(noDevices);
         }
+
+        // Initialize the button to perform device discovery
+        Button scanButton = (Button) findViewById(R.id.button_scan);
+//        scanButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+        doDiscovery();
+        scanButton.setVisibility(View.GONE);
+//            }
+//        });
+    }
+
+    private void setResult(String address) {
+        // Create the result Intent and include the MAC address
+        Intent intent = new Intent();
+        intent.putExtra(EXTRA_DEVICE_ADDRESS, address);
+
+        // Set result and finish this Activity
+        setResult(Activity.RESULT_OK, intent);
+        finish();
     }
 
     @Override
@@ -185,13 +201,7 @@ public class DeviceListActivity extends Activity {
             String info = ((TextView) v).getText().toString();
             String address = info.substring(info.length() - 17);
 
-            // Create the result Intent and include the MAC address
-            Intent intent = new Intent();
-            intent.putExtra(EXTRA_DEVICE_ADDRESS, address);
-
-            // Set result and finish this Activity
-            setResult(Activity.RESULT_OK, intent);
-            finish();
+            setResult(address);
         }
     };
 
@@ -220,6 +230,9 @@ public class DeviceListActivity extends Activity {
                     }
                     if (device.getName().toLowerCase().contains(mFilterDeviceNameContains.toLowerCase())) {
                         mNewDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+                        if (mSearchDeviceType == BluetoothBaseActivity.SearchDevicesType.Connect) {
+                            DeviceListActivity.this.setResult(device.getAddress());
+                        }
                         return;
                     }
                 }
