@@ -181,16 +181,16 @@ public abstract class BleScanHelper extends BaseActivity {
     private BluetoothAdapter.LeScanCallback mLeScanCallback = new BluetoothAdapter.LeScanCallback() {
         @Override
         public void onLeScan(final BluetoothDevice device, final int rssi, final byte[] scanRecord) {
-            boolean filterRssi = mFilterRssi != 0;
-            boolean filterDeviceName = !TextUtils.isEmpty(mFilterDeviceNameContains);
+            boolean filterRssi = (mFilterRssi != 0);
+            boolean filterDeviceName = (!TextUtils.isEmpty(mFilterDeviceNameContains));
 
             boolean filterRssiMatch = false;
             if (filterRssi) {
-                filterRssiMatch = mFilterRssi > rssi;
+                filterRssiMatch = (rssi > mFilterRssi);
             }
             boolean filterDeviceNameMatch = false;
             if (filterDeviceName) {
-                filterDeviceNameMatch = (!TextUtils.isEmpty(device.getName())) && device.getName().toLowerCase().contains(mFilterDeviceNameContains.toLowerCase());
+                filterDeviceNameMatch = ((!TextUtils.isEmpty(device.getName())) && (device.getName().toLowerCase().contains(mFilterDeviceNameContains.toLowerCase())));
             }
 
             if ((filterRssi && (!filterRssiMatch)) || (filterDeviceName && (!filterDeviceNameMatch))) {
