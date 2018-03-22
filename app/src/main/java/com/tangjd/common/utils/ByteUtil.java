@@ -152,6 +152,31 @@ public class ByteUtil {
         return new String(hexChars);
     }
 
+    public static String bytesToHexStringWithoutSpace(byte[] buffer) {
+        if (buffer == null || buffer.length <= 0) {
+            return null;
+        }
+        StringBuilder builder = new StringBuilder("");
+        for (int i = 0; i < buffer.length; i++) {
+            int value = buffer[i] & 0xFF;
+            String hexStr = Integer.toHexString(value);
+            if (hexStr.length() < 2) {
+                builder.append(0);
+            }
+            builder.append(hexStr);
+        }
+        return builder.toString();
+    }
+
+    public static String singleByteToHexString(byte singleByte) {
+        final char[] hexArray = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+        char[] hexChars = new char[2];
+        int v = singleByte & 0xFF;
+        hexChars[0] = hexArray[v >>> 4];
+        hexChars[1] = hexArray[v & 0x0F];
+        return new String(hexChars);
+    }
+
     /**
      * Utility class to convert a hexadecimal string to a byte string.
      * <p>

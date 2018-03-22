@@ -9,9 +9,19 @@ import java.text.DecimalFormat;
  */
 
 public class DecimalUtil {
-    public static DecimalFormat get2Format() {
-        return new DecimalFormat("###.00");
+    private static DecimalFormat sDecimalFormat;
+
+    public static DecimalFormat getSimpleFormat() {
+        if (sDecimalFormat == null) {
+            sDecimalFormat = new DecimalFormat("0.0");
+        }
+        return sDecimalFormat;
     }
+
+    public static String simpleFormat(Object data) {
+        return getSimpleFormat().format(data);
+    }
+
 
     public static float strToFloat2(String value) {
         return new BigDecimal(value).setScale(2, RoundingMode.HALF_UP).floatValue();

@@ -23,8 +23,24 @@ public class ByteUtil {
             }
             builder.append(hexStr);
             if (i != buffer.length - 1) {
-                builder.append(", ");
+                builder.append(" ");
             }
+        }
+        return builder.toString();
+    }
+
+    public static String bytesToHexStringWithoutSpace(byte[] buffer) {
+        if (buffer == null || buffer.length <= 0) {
+            return null;
+        }
+        StringBuilder builder = new StringBuilder("");
+        for (int i = 0; i < buffer.length; i++) {
+            int value = buffer[i] & 0xFF;
+            String hexStr = Integer.toHexString(value);
+            if (hexStr.length() < 2) {
+                builder.append(0);
+            }
+            builder.append(hexStr);
         }
         return builder.toString();
     }
