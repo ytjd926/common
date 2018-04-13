@@ -1,0 +1,5 @@
+        <activity
+            android:name=".ActFrame"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
