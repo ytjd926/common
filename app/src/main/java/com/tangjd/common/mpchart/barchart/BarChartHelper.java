@@ -85,6 +85,8 @@ public class BarChartHelper {
         xAxis.setDrawGridLines(false);
         xAxis.setGranularity(1f); // only intervals of 1 day
         xAxis.setLabelCount(xAxisLabelCount);
+        // 设置x坐标旋转
+//        xAxis.setLabelRotationAngle();
         xAxis.setValueFormatter(xAxisLabelFormatter);
 
         IAxisValueFormatter custom = new YAxisLabelFormatter(unit);
