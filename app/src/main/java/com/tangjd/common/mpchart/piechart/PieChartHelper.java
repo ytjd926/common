@@ -13,7 +13,6 @@ import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
-import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,11 +90,8 @@ public class PieChartHelper {
         l.setEnabled(false);
     }
 
-
-    public void setData(List<PieChartData> beans) {
-
+    public void setData(List<PieChartData> beans, List<Integer> colors) {
         ArrayList<PieEntry> entries = new ArrayList<PieEntry>();
-
         // NOTE: The order of the entries when being added to the entries array determines their position around the center of
         // the chart.
         for (int i = 0; i < beans.size(); i++) {
@@ -107,30 +103,8 @@ public class PieChartHelper {
         dataSet.setSliceSpace(3f);
         dataSet.setSelectionShift(5f);
 
-        // add a lot of colors
-
-        ArrayList<Integer> colors = new ArrayList<Integer>();
-
-        for (int c : ColorTemplate.VORDIPLOM_COLORS)
-            colors.add(c);
-
-        for (int c : ColorTemplate.JOYFUL_COLORS)
-            colors.add(c);
-
-        for (int c : ColorTemplate.COLORFUL_COLORS)
-            colors.add(c);
-
-        for (int c : ColorTemplate.LIBERTY_COLORS)
-            colors.add(c);
-
-        for (int c : ColorTemplate.PASTEL_COLORS)
-            colors.add(c);
-
-        colors.add(ColorTemplate.getHoloBlue());
-
         dataSet.setColors(colors);
         //dataSet.setSelectionShift(0f);
-
 
         dataSet.setValueLinePart1OffsetPercentage(80.f);
         dataSet.setValueLinePart1Length(0.2f);
@@ -149,5 +123,17 @@ public class PieChartHelper {
         mChart.highlightValues(null);
 
         mChart.invalidate();
+    }
+
+    public void setDrawValues(boolean drawValues) {
+        mChart.getData().getDataSet().setDrawValues(drawValues);
+    }
+
+    public void setCenterText(String text) {
+        mChart.setCenterText(text);
+    }
+
+    public void setCenterTextSize(int sizeDp) {
+        mChart.setCenterTextSize(sizeDp);
     }
 }
