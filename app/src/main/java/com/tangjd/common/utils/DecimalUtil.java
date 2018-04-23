@@ -13,7 +13,7 @@ public class DecimalUtil {
 
     public static DecimalFormat getSimpleFormat() {
         if (sDecimalFormat == null) {
-            sDecimalFormat = new DecimalFormat("0.0");
+            sDecimalFormat = new DecimalFormat("0.00");
         }
         return sDecimalFormat;
     }

@@ -2,7 +2,6 @@ package com.tangjd.common.mpchart.barchart;
 
 import android.content.Context;
 import android.graphics.RectF;
-import android.util.Log;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.AxisBase;
@@ -32,31 +31,47 @@ public class BarChartHelper {
     private Context mContext;
     private BarChart mChart;
     private RectF mOnValueSelectedRectF = new RectF();
+    private int mBarColor;
 
     public BarChartHelper(Context context, BarChart barChart) {
         mContext = context;
         mChart = barChart;
     }
 
-    public void initBarChart(String unit, int xAxisLabelCount, IAxisValueFormatter xAxisLabelFormatter) {
+    /**
+     * @param unit                单位
+     * @param showXAxisLabelCount x坐标label显示的个数，如：共30个柱状图形，可以设置显示10个label等，使显示效果不至于太密集
+     * @param xAxisLabelFormatter x坐标label需要显示的内容可以自定义，
+     *                            回调如下：
+     *                            public String getFormattedValue(float value, AxisBase axis) {
+     *                            }
+     *                            注意value的起始值为1！
+     */
+    public void initBarChart(String unit, int showXAxisLabelCount, IAxisValueFormatter xAxisLabelFormatter) {
+        initBarChart(unit, showXAxisLabelCount, mContext.getResources().getColor(R.color.colorPrimary), xAxisLabelFormatter);
+    }
+
+    /**
+     * @param unit                单位
+     * @param showXAxisLabelCount x坐标label显示的个数，如：共30个柱状图形，可以设置显示10个label等，使显示效果不至于太密集
+     * @param barColor            柱状图形的颜色
+     * @param xAxisLabelFormatter x坐标label需要显示的内容可以自定义，
+     *                            回调如下：
+     *                            public String getFormattedValue(float value, AxisBase axis) {
+     *                            }
+     *                            注意value的起始值为1！
+     */
+    public void initBarChart(String unit, int showXAxisLabelCount, int barColor, IAxisValueFormatter xAxisLabelFormatter) {
+        mBarColor = barColor;
         mChart.setNoDataText("没有数据");
         mChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
             @Override
             public void onValueSelected(Entry e, Highlight h) {
                 if (e == null)
                     return;
-
                 RectF bounds = mOnValueSelectedRectF;
                 mChart.getBarBounds((BarEntry) e, bounds);
                 MPPointF position = mChart.getPosition(e, YAxis.AxisDependency.LEFT);
-
-                Log.i("bounds", bounds.toString());
-                Log.i("position", position.toString());
-
-                Log.i("x-index",
-                        "low: " + mChart.getLowestVisibleX() + ", high: "
-                                + mChart.getHighestVisibleX());
-
                 MPPointF.recycleInstance(position);
             }
 
@@ -84,9 +99,7 @@ public class BarChartHelper {
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setDrawGridLines(false);
         xAxis.setGranularity(1f); // only intervals of 1 day
-        xAxis.setLabelCount(xAxisLabelCount);
-        // 设置x坐标旋转
-//        xAxis.setLabelRotationAngle();
+        xAxis.setLabelCount(showXAxisLabelCount);
         xAxis.setValueFormatter(xAxisLabelFormatter);
 
         IAxisValueFormatter custom = new YAxisLabelFormatter(unit);
@@ -162,8 +175,7 @@ public class BarChartHelper {
 
             set1.setDrawIcons(false);
             set1.setDrawValues(false);
-            set1.setColors(mContext.getResources().getColor(R.color.colorPrimary));
-
+            set1.setColors(mBarColor);
             ArrayList<IBarDataSet> dataSets = new ArrayList<>();
             dataSets.add(set1);
 
@@ -201,4 +213,8 @@ public class BarChartHelper {
 //            return ((int) value) + "日";
 //        }
 //    }
+
+    public void setLabelRotationAngle(float angle) {
+        mChart.getXAxis().setLabelRotationAngle(angle);
+    }
 }
