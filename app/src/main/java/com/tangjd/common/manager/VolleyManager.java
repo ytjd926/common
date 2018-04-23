@@ -14,7 +14,11 @@ public class VolleyManager {
 
     public static VolleyManager getInstance() {
         if (sVolleyManager == null) {
-            sVolleyManager = new VolleyManager();
+            synchronized (VolleyManager.class) {
+                if (sVolleyManager == null) {
+                    sVolleyManager = new VolleyManager();
+                }
+            }
         }
         return sVolleyManager;
     }
@@ -22,7 +26,11 @@ public class VolleyManager {
     public void init(Context context) {
         mContext = context;
         if (mRequestQueue == null) {
-            mRequestQueue = Volley.newRequestQueue(context);
+            synchronized (VolleyManager.class) {
+                if (mRequestQueue == null) {
+                    mRequestQueue = Volley.newRequestQueue(mContext);
+                }
+            }
         }
     }
 
@@ -30,7 +38,11 @@ public class VolleyManager {
 
     public RequestQueue getRequestQueue() {
         if (mRequestQueue == null) {
-            mRequestQueue = Volley.newRequestQueue(mContext);
+            synchronized (VolleyManager.class) {
+                if (mRequestQueue == null) {
+                    mRequestQueue = Volley.newRequestQueue(mContext);
+                }
+            }
         }
         return mRequestQueue;
     }

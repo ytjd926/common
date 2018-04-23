@@ -41,19 +41,27 @@ public class DisplayUtils {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, context.getResources().getDisplayMetrics());
     }
 
+    private static Point sScreenPoint;
+
     public static Point getScreenSize(Activity activity) {
-        WindowManager windowManager = activity.getWindowManager();
-        Display display = windowManager.getDefaultDisplay();
-        Point screenPoint = new Point();
-        if (BuildUtil.hasHoneycombMR2()) {
-            display.getSize(screenPoint);
-        } else {
-            int width = display.getWidth();
-            int height = display.getHeight();
-            screenPoint.x = width;
-            screenPoint.y = height;
+        if (sScreenPoint == null) {
+            synchronized (DisplayUtils.class) {
+                if (sScreenPoint == null) {
+                    WindowManager windowManager = activity.getWindowManager();
+                    Display display = windowManager.getDefaultDisplay();
+                    sScreenPoint = new Point();
+                    if (BuildUtil.hasHoneycombMR2()) {
+                        display.getSize(sScreenPoint);
+                    } else {
+                        int width = display.getWidth();
+                        int height = display.getHeight();
+                        sScreenPoint.x = width;
+                        sScreenPoint.y = height;
+                    }
+                }
+            }
         }
-        return screenPoint;
+        return sScreenPoint;
     }
 
 

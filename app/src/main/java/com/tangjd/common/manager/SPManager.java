@@ -13,7 +13,11 @@ public class SPManager {
 
     public static SPManager getInstance() {
         if (sSPManager == null) {
-            sSPManager = new SPManager();
+            synchronized (SPManager.class) {
+                if (sSPManager == null) {
+                    sSPManager = new SPManager();
+                }
+            }
         }
         return sSPManager;
     }
