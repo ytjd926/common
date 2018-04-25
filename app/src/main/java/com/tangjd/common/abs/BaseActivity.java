@@ -430,6 +430,20 @@ public class BaseActivity extends AppCompatActivity {
         return RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL);
     }
 
+    public void loadImage(Object urlOrFileOrPath, ImageView imageView) {
+        loadImage(urlOrFileOrPath, imageView, R.drawable.ic_default);
+    }
+
+    public void loadImage(Object urlOrFileOrPath, ImageView imageView, int loadingRes) {
+        GlideApp.with(this)
+                .load(urlOrFileOrPath)
+                .placeholder(loadingRes)
+                .error(loadingRes)
+                .fallback(loadingRes)
+                .apply(
+                        getDefaultRequestOption()
+                ).into(imageView);
+    }
     public void loadImageCenterCrop(Object urlOrFileOrPath, ImageView imageView) {
         loadImageCenterCrop(urlOrFileOrPath, imageView, R.drawable.ic_default);
     }
@@ -544,7 +558,7 @@ public class BaseActivity extends AppCompatActivity {
 
     // Permission
     // ------ Start ------
-    PermissionChecker mPermissionChecker;
+    public PermissionChecker mPermissionChecker;
     PermissionRequestCallback mPermissionCallback;
 
     public void mayRequestPermission(String[] permissionArr, PermissionRequestCallback callback) {

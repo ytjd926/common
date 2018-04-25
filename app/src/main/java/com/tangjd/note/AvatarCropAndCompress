@@ -2,6 +2,24 @@ https://github.com/Yalantis/uCrop
 https://github.com/Curzibn/Luban
 
 
+Declare these activities in your AndroidManifest.xml
+
+        <activity
+            android:name="me.iwf.photopicker.PhotoPickerActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:theme="@style/customTheme"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
+
+        <activity
+            android:name="me.iwf.photopicker.PhotoPagerActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:theme="@style/customTheme"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
+
+
+
 import com.werb.permissionschecker.PermissionChecker;
 import com.yalantis.ucrop.UCrop;
 import me.iwf.photopicker.PhotoPicker;

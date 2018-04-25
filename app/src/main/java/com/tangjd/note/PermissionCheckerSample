@@ -1,5 +1,4 @@
 https://github.com/Werb/PermissionsCheckerSample
-
 mayRequestPermission(new String[]{
         Manifest.permission.ACCESS_FINE_LOCATION,
         Manifest.permission.BLUETOOTH,
@@ -15,6 +14,17 @@ mayRequestPermission(new String[]{
         }
     }
 });
+
+        btnChangePhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (permissionChecker.isLackPermissions(PERMISSIONS)) {
+                    permissionChecker.requestPermissions();
+                } else {
+                    pickPhoto();
+                }
+            }
+        });
 
 permissionChecker = new PermissionChecker(this); // 初始化，必需
 permissionChecker.setTitle(getString(R.string.check_info_title)); // 权限拒绝后的提示，非必需
