@@ -29,11 +29,12 @@ import com.tangjd.common.R;
 import com.werb.permissionschecker.PermissionChecker;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Created by tangjd on 2015/12/14.
  */
-public class BaseActivity extends AppCompatActivity {
+public class BaseActivity<T> extends AppCompatActivity {
     // StatusBar
     // ------ Start ------
     public void setStatusBarColor(int color) {
@@ -284,6 +285,22 @@ public class BaseActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
+    public void showSingleChoiceDialog(List<T> items, DialogInterface.OnClickListener listener) {
+        try {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            String[] arr = new String[items.size()];
+            for (int i = 0; i < items.size(); i++) {
+                arr[i] = items.get(i).toString();
+            }
+            builder.setItems(arr, listener);
+            if (!isFinishing()) {
+                builder.create().show();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     // ------ End ------
 
     // Snackbar
@@ -444,6 +461,7 @@ public class BaseActivity extends AppCompatActivity {
                         getDefaultRequestOption()
                 ).into(imageView);
     }
+
     public void loadImageCenterCrop(Object urlOrFileOrPath, ImageView imageView) {
         loadImageCenterCrop(urlOrFileOrPath, imageView, R.drawable.ic_default);
     }

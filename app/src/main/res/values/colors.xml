@@ -28,7 +28,7 @@
     <color name="transparent_half_2">#20000000</color>
 
     <color name="light_gray_line">#DCDCDC</color>
-    <color name="light_gray_line_light">#FAFAFA</color>
+    <color name="light_gray_line_light">#F2F2F2</color>
 
     <color name="light_black_ab">#ABABAB</color>
     <color name="light_black_a">#AAAAAA</color>
@@ -36,6 +36,7 @@
     <color name="light_black_6">#666666</color>
     <color name="light_black_4b">#4B4B4B</color>
     <color name="light_black_3">#333333</color>
+    <color name="text_default_color">#999999</color>
 
     <color name="weChatBtnNormal">#19AC18</color>
     <color name="weChatBtnPressed">#169A15</color>

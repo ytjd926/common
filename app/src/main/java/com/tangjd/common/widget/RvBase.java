@@ -191,8 +191,10 @@ public abstract class RvBase<T> extends RecyclerView {
     }
 
     public void onLoadMoreSuccess(List<T> beans) {
-        if (beans == null || beans.size() == 0) {
+        if (beans == null) {
             mAdapter.loadMoreFail();
+        } else if (beans.size() == 0) {
+            mAdapter.loadMoreEnd();
         } else {
             addData(beans);
             mAdapter.loadMoreComplete();
