@@ -531,6 +531,7 @@ public class BaseActivity<T> extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        overridePendingTransition(0, 0);
         super.onCreate(savedInstanceState);
         mCommonBean = getIntent().getSerializableExtra(EXTRA_COMMON_DATA_BEAN);
     }
@@ -610,4 +611,10 @@ public class BaseActivity<T> extends AppCompatActivity {
         void onSuccess();
     }
     // ------ End ------
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(0, 0);
+    }
 }
