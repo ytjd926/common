@@ -125,6 +125,9 @@ public class PieChartHelper {
         mChart.invalidate();
     }
 
+    /**
+     * 在setData()之后调用
+     */
     public void setDrawValues(boolean drawValues) {
         mChart.getData().getDataSet().setDrawValues(drawValues);
     }
