@@ -27,6 +27,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.tangjd.common.abs.BaseActivity;
@@ -204,7 +205,7 @@ public abstract class BleScanHelper extends BaseActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                // Log.e("TTT", "----------Rssi:" + rssi + "      " + device.getAddress() + "      " + device.getName());
+                Log.e("TTTTTT", "----------Rssi:" + rssi + "      " + device.getAddress() + "      " + device.getName() + "      " + ((scanRecord[27] << 8 & 65280) + (scanRecord[28] & 255)));
                 processLogin(device, rssi, scanRecord,
                         (scanRecord[25] << 8 & 65280) + (scanRecord[26] & 255),
                         (scanRecord[27] << 8 & 65280) + (scanRecord[28] & 255));

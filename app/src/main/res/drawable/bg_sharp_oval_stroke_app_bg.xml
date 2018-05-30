@@ -6,5 +6,5 @@
 
     <stroke
         android:width="0.3dip"
-        android:color="@color/app_bg" />
+        android:color="@color/text_default_color" />
 </shape>
