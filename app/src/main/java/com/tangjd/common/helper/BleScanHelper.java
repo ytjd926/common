@@ -20,17 +20,21 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothManager;
-import android.content.Context;
+import android.bluetooth.le.ScanCallback;
+import android.bluetooth.le.ScanResult;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.tangjd.common.abs.BaseActivity;
+
+import java.util.List;
 
 /**
  * Activity for scanning and displaying available Bluetooth LE devices.
@@ -39,7 +43,8 @@ import com.tangjd.common.abs.BaseActivity;
 public abstract class BleScanHelper extends BaseActivity {
     private BluetoothAdapter mBluetoothAdapter;
     private boolean mScanning;
-
+    private Handler mBackHandler;
+    private HandlerThread mBackThread;
     private static final int REQUEST_ENABLE_BT = 1;
 //    // Stops scanning after 10 seconds.
 //    private static final long SCAN_PERIOD = 10000;
@@ -73,7 +78,9 @@ public abstract class BleScanHelper extends BaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        mBackThread = new HandlerThread("BleScanResultThread");
+        mBackThread.start();
+        mBackHandler = new Handler(mBackThread.getLooper());
         // Use this check to determine whether BLE is supported on the device.  Then you can
         // selectively disable BLE-related features.
         if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
@@ -81,14 +88,15 @@ public abstract class BleScanHelper extends BaseActivity {
             return;
         }
 
-        // Initializes a Bluetooth adapter.  For API level 18 and above, get a reference to
-        // BluetoothAdapter through BluetoothManager.
-        final BluetoothManager bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
-        if (bluetoothManager == null) {
-            showTipDialog("此设备不支持蓝牙", false, null);
-            return;
-        }
-        mBluetoothAdapter = bluetoothManager.getAdapter();
+//        // Initializes a Bluetooth adapter.  For API level 18 and above, get a reference to
+//        // BluetoothAdapter through BluetoothManager.
+//        final BluetoothManager bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
+//        if (bluetoothManager == null) {
+//            showTipDialog("此设备不支持蓝牙", false, null);
+//            return;
+//        }
+//        mBluetoothAdapter = bluetoothManager.getAdapter();
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
         // Checks if Bluetooth is supported on the device.
         if (mBluetoothAdapter == null) {
@@ -147,7 +155,7 @@ public abstract class BleScanHelper extends BaseActivity {
         }
     }
 
-//    @Override
+    //    @Override
 //    protected void onListItemClick(ListView l, View v, int position, long id) {
 //        final BluetoothDevice device = mLeDeviceListAdapter.getDevice(position).mLeDevices;
 //        if (device == null) return;
@@ -160,7 +168,6 @@ public abstract class BleScanHelper extends BaseActivity {
 //        }
 //        startActivity(intent);
 //    }
-
     public void scanLeDevice(final boolean enable) {
         if (mScanning && enable) {
             return;
@@ -168,36 +175,91 @@ public abstract class BleScanHelper extends BaseActivity {
         if (!mScanning && !enable) {
             return;
         }
-        if (enable) {
-            mScanning = true;
-            mBluetoothAdapter.startLeScan(mLeScanCallback);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            if (enable) {
+                mScanning = true;
+                mBluetoothAdapter.startLeScan(mLeScanCallback);
+            } else {
+                mScanning = false;
+                mBluetoothAdapter.stopLeScan(mLeScanCallback);
+            }
         } else {
-            mScanning = false;
-            mBluetoothAdapter.stopLeScan(mLeScanCallback);
+            if (enable) {
+                mScanning = true;
+                mBluetoothAdapter.getBluetoothLeScanner().startScan(mScanCallback);
+            } else {
+                mScanning = false;
+                mBluetoothAdapter.getBluetoothLeScanner().stopScan(mScanCallback);
+            }
         }
+
         invalidateOptionsMenu();
     }
+
+    private ScanCallback mScanCallback = new ScanCallback() {
+        @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+        @Override
+        public void onScanResult(int callbackType, final ScanResult result) {
+            super.onScanResult(callbackType, result);
+            mBackHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    boolean filterRssi = (mFilterRssi != 0);
+                    boolean filterDeviceName = (!TextUtils.isEmpty(mFilterDeviceNameContains));
+
+                    boolean filterRssiMatch = false;
+                    if (filterRssi) {
+                        filterRssiMatch = (result.getRssi() > mFilterRssi);
+                    }
+                    boolean filterDeviceNameMatch = false;
+                    if (filterDeviceName) {
+                        filterDeviceNameMatch = ((!TextUtils.isEmpty(result.getDevice().getName())) && (result.getDevice().getName().toLowerCase().contains(mFilterDeviceNameContains.toLowerCase())));
+                    }
+
+                    if ((filterRssi && (!filterRssiMatch)) || (filterDeviceName && (!filterDeviceNameMatch))) {
+                        return;
+                    }
+                    parse(result.getDevice(), result.getRssi(), result.getScanRecord().getBytes());
+                }
+            });
+        }
+
+        @Override
+        public void onBatchScanResults(List<ScanResult> results) {
+            super.onBatchScanResults(results);
+        }
+
+        @Override
+        public void onScanFailed(int errorCode) {
+            super.onScanFailed(errorCode);
+        }
+    };
 
     // Device scan callback.
     private BluetoothAdapter.LeScanCallback mLeScanCallback = new BluetoothAdapter.LeScanCallback() {
         @Override
         public void onLeScan(final BluetoothDevice device, final int rssi, final byte[] scanRecord) {
-            boolean filterRssi = (mFilterRssi != 0);
-            boolean filterDeviceName = (!TextUtils.isEmpty(mFilterDeviceNameContains));
+            mBackHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    boolean filterRssi = (mFilterRssi != 0);
+                    boolean filterDeviceName = (!TextUtils.isEmpty(mFilterDeviceNameContains));
 
-            boolean filterRssiMatch = false;
-            if (filterRssi) {
-                filterRssiMatch = (rssi > mFilterRssi);
-            }
-            boolean filterDeviceNameMatch = false;
-            if (filterDeviceName) {
-                filterDeviceNameMatch = ((!TextUtils.isEmpty(device.getName())) && (device.getName().toLowerCase().contains(mFilterDeviceNameContains.toLowerCase())));
-            }
+                    boolean filterRssiMatch = false;
+                    if (filterRssi) {
+                        filterRssiMatch = (rssi > mFilterRssi);
+                    }
+                    boolean filterDeviceNameMatch = false;
+                    if (filterDeviceName) {
+                        filterDeviceNameMatch = ((!TextUtils.isEmpty(device.getName())) && (device.getName().toLowerCase().contains(mFilterDeviceNameContains.toLowerCase())));
+                    }
 
-            if ((filterRssi && (!filterRssiMatch)) || (filterDeviceName && (!filterDeviceNameMatch))) {
-                return;
-            }
-            parse(device, rssi, scanRecord);
+                    if ((filterRssi && (!filterRssiMatch)) || (filterDeviceName && (!filterDeviceNameMatch))) {
+                        return;
+                    }
+                    parse(device, rssi, scanRecord);
+                }
+            });
         }
     };
 
