@@ -301,6 +301,28 @@ public class BaseActivity<T> extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
+    public void showMultiChoiceDialog(
+            boolean cancelable, List<T> items, DialogInterface.OnClickListener positiveClickListener,
+            DialogInterface.OnClickListener negativeClickListener,
+            DialogInterface.OnMultiChoiceClickListener onMultiChoiceClickListener) {
+        try {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            String[] arr = new String[items.size()];
+            for (int i = 0; i < items.size(); i++) {
+                arr[i] = items.get(i).toString();
+            }
+            builder.setMultiChoiceItems(arr, null, onMultiChoiceClickListener);
+            builder.setPositiveButton(android.R.string.ok, positiveClickListener);
+            builder.setNegativeButton(android.R.string.cancel, negativeClickListener);
+            builder.setCancelable(cancelable);
+            if (!isFinishing()) {
+                builder.create().show();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     // ------ End ------
 
     // Snackbar
@@ -531,6 +553,7 @@ public class BaseActivity<T> extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        overridePendingTransition(0, 0);
         super.onCreate(savedInstanceState);
         mCommonBean = getIntent().getSerializableExtra(EXTRA_COMMON_DATA_BEAN);
     }
@@ -610,4 +633,10 @@ public class BaseActivity<T> extends AppCompatActivity {
         void onSuccess();
     }
     // ------ End ------
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(0, 0);
+    }
 }

@@ -113,16 +113,19 @@ public class DeviceListActivity extends Activity {
         if (pairedDevices.size() > 0) {
             findViewById(R.id.title_paired_devices).setVisibility(View.VISIBLE);
             for (BluetoothDevice device : pairedDevices) {
+                String name = device.getName();
+                String mac = device.getAddress();
+
                 if (TextUtils.isEmpty(mFilterDeviceNameContains)) {
-                    pairedDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+                    addDeviceToList(pairedDevicesArrayAdapter, name, mac);
                     return;
                 }
-                if (TextUtils.isEmpty(device.getName()) || device.getName().equalsIgnoreCase("null")) {
-                    pairedDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
-                    return;
-                }
-                if (device.getName().toLowerCase().contains(mFilterDeviceNameContains.toLowerCase())) {
-                    pairedDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+//                if (TextUtils.isEmpty(device.getName()) || device.getName().equalsIgnoreCase("null")) {
+//                    pairedDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+//                    return;
+//                }
+                if (name.toLowerCase().contains(mFilterDeviceNameContains.toLowerCase())) {
+                    addDeviceToList(pairedDevicesArrayAdapter, name, mac);
                     if (mSearchDeviceType == BluetoothBaseActivity.SearchDevicesType.Connect) {
                         setResult(device.getAddress());
                     }
@@ -144,6 +147,20 @@ public class DeviceListActivity extends Activity {
 //            }
 //        });
     }
+
+    private synchronized void addDeviceToList(ArrayAdapter<String> adapter, String name, String mac) {
+        boolean contains = false;
+        for (int i = 0; i < adapter.getCount(); i++) {
+            if (adapter.getItem(i).contains(mac)) {
+                contains = true;
+                break;
+            }
+        }
+        if (!contains) {
+            adapter.add(name + "\n" + mac);
+        }
+    }
+
 
     private void setResult(String address) {
         // Create the result Intent and include the MAC address
@@ -220,18 +237,20 @@ public class DeviceListActivity extends Activity {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 // If it's already paired, skip it, because it's been listed already
                 if (device.getBondState() != BluetoothDevice.BOND_BONDED) {
+                    String mac = device.getAddress();
+                    String name = device.getName();
+                    if (TextUtils.isEmpty(name) || name.equalsIgnoreCase("null")) {
+                        // mNewDevicesArrayAdapter.add(name + "\n" + mac);
+                        return;
+                    }
                     if (TextUtils.isEmpty(mFilterDeviceNameContains)) {
-                        mNewDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+                        addDeviceToList(mNewDevicesArrayAdapter, name, mac);
                         return;
                     }
-                    if (TextUtils.isEmpty(device.getName()) || device.getName().equalsIgnoreCase("null")) {
-                        mNewDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
-                        return;
-                    }
-                    if (device.getName().toLowerCase().contains(mFilterDeviceNameContains.toLowerCase())) {
-                        mNewDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+                    if (name.toLowerCase().contains(mFilterDeviceNameContains.toLowerCase())) {
+                        addDeviceToList(mNewDevicesArrayAdapter, name, mac);
                         if (mSearchDeviceType == BluetoothBaseActivity.SearchDevicesType.Connect) {
-                            DeviceListActivity.this.setResult(device.getAddress());
+                            DeviceListActivity.this.setResult(mac);
                         }
                         return;
                     }
