@@ -46,10 +46,11 @@ public abstract class BleScanHelper extends BaseActivity {
     private Handler mBackHandler;
     private HandlerThread mBackThread;
     private static final int REQUEST_ENABLE_BT = 1;
-//    // Stops scanning after 10 seconds.
-//    private static final long SCAN_PERIOD = 10000;
 
     private ConnectState mState = ConnectState.STATE_NONE;
+
+//    private static final int SCAN_PERIOD = 20 * 1000;
+//    private static final int SCAN_INTERVAL = 2 * 1000;
 
     public enum ConnectState {
         STATE_NONE("无连接"), // we're doing nothing
@@ -168,6 +169,20 @@ public abstract class BleScanHelper extends BaseActivity {
 //        }
 //        startActivity(intent);
 //    }
+//    private Handler mHandler = new Handler();
+//    private Runnable mScanPeriodRunnable = new Runnable() {
+//        @Override
+//        public void run() {
+//            scanLeDevice(false);
+//            try {
+//                Thread.sleep(SCAN_INTERVAL);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//            scanLeDevice(true);
+//        }
+//    };
+
     public void scanLeDevice(final boolean enable) {
         if (mScanning && enable) {
             return;
@@ -175,24 +190,26 @@ public abstract class BleScanHelper extends BaseActivity {
         if (!mScanning && !enable) {
             return;
         }
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            if (enable) {
+
+        if (enable) {
+//            mHandler.removeCallbacks(mScanPeriodRunnable);
+//            mHandler.postDelayed(mScanPeriodRunnable, SCAN_PERIOD);
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
                 mScanning = true;
                 mBluetoothAdapter.startLeScan(mLeScanCallback);
             } else {
-                mScanning = false;
-                mBluetoothAdapter.stopLeScan(mLeScanCallback);
-            }
-        } else {
-            if (enable) {
                 mScanning = true;
                 mBluetoothAdapter.getBluetoothLeScanner().startScan(mScanCallback);
+            }
+        } else {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                mScanning = false;
+                mBluetoothAdapter.stopLeScan(mLeScanCallback);
             } else {
                 mScanning = false;
                 mBluetoothAdapter.getBluetoothLeScanner().stopScan(mScanCallback);
             }
         }
-
         invalidateOptionsMenu();
     }
 
