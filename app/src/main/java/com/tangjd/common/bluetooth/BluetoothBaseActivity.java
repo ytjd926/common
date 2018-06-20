@@ -3,6 +3,7 @@ package com.tangjd.common.bluetooth;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -53,6 +54,8 @@ public abstract class BluetoothBaseActivity extends BaseActivity {
 
     public int mConnectStatus;
 
+    private boolean mRequestFinish = false;
+
     @Override
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
@@ -63,6 +66,27 @@ public abstract class BluetoothBaseActivity extends BaseActivity {
         if (mBluetoothAdapter == null) {
             Toast.makeText(this, "蓝牙不可用", Toast.LENGTH_LONG).show();
 //			finish();
+        }
+    }
+
+//    @Override
+//    public void onBackPressed() {
+//        if (mConnectStatus == BluetoothChatService.STATE_CONNECTED) {
+//            stopBTListener();
+//        } else {
+//            super.onBackPressed();
+//        }
+//    }
+
+    @Override
+    public void finish() {
+        mRequestFinish = true;
+        if (mConnectStatus == BluetoothChatService.STATE_CONNECTED) {
+            // showProgressDialog("正在关闭蓝牙连接");
+            showToast("正在关闭蓝牙连接");
+            stopBTListener();
+        } else {
+            super.finish();
         }
     }
 
@@ -251,22 +275,6 @@ public abstract class BluetoothBaseActivity extends BaseActivity {
             switch (msg.what) {
                 case Constants.MESSAGE_STATE_CHANGE:
                     onBtStateChanged(msg.arg1);
-                    mConnectStatus = msg.arg1;
-                    switch (msg.arg1) {
-                        case BluetoothChatService.STATE_CONNECTED:
-                            setStatus("已连接到 " + mConnectedDeviceName);
-                            break;
-                        case BluetoothChatService.STATE_CONNECTING:
-                            setStatus("连接中……");
-                            break;
-                        case BluetoothChatService.STATE_LISTEN:
-                        case BluetoothChatService.STATE_NONE:
-                            setStatus("未连接");
-                            break;
-                        case BluetoothChatService.STATE_CONNECTION_FAILED:
-                            setStatus("连接失败");
-                            break;
-                    }
                     break;
                 case Constants.MESSAGE_WRITE:
                     byte[] writeBuf = (byte[]) msg.obj;
@@ -280,7 +288,7 @@ public abstract class BluetoothBaseActivity extends BaseActivity {
                     // Toast.makeText(BluetoothBaseActivity.this, "蓝牙已连接到 " + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
                     break;
                 case Constants.MESSAGE_CONNECTION_LOST:
-                    onBtConnectionLost();
+                    onBtStateChanged(BluetoothChatService.STATE_CONNECTION_LOST);
                     break;
             }
         }
@@ -362,15 +370,103 @@ public abstract class BluetoothBaseActivity extends BaseActivity {
     }
 
     protected synchronized void onBtStateChanged(int btState) {
-        // TODO onBtStateChanged
+        mConnectStatus = btState;
+        switch (btState) {
+            case BluetoothChatService.STATE_CONNECTED:
+                setStatus("已连接到 " + mConnectedDeviceName);
+                break;
+            case BluetoothChatService.STATE_CONNECTING:
+                setStatus("正在连接 " + mConnectedDeviceName);
+                break;
+            case BluetoothChatService.STATE_LISTEN:
+            case BluetoothChatService.STATE_NONE:
+                setStatus("未连接");
+                if (mRequestFinish) {
+//                    dismissProgressDialog();
+                    dismissToast();
+                    showShortToast("蓝牙断开成功");
+                    finish();
+                }
+                break;
+            case BluetoothChatService.STATE_CONNECTION_FAILED:
+                setStatus("连接失败");
+                if (mRequestFinish) {
+//                    dismissProgressDialog();
+                    dismissToast();
+                    showShortToast("蓝牙断开成功");
+                    finish();
+                }
+                break;
+            case BluetoothChatService.STATE_CONNECTION_LOST:
+                if (mRequestFinish) {
+//                    dismissProgressDialog();
+                    dismissToast();
+                    showShortToast("蓝牙断开成功");
+                    finish();
+                }
+                break;
+        }
+
+        switch (btState) {
+            case BluetoothChatService.STATE_NONE:
+                break;
+            case BluetoothChatService.STATE_LISTEN:
+                break;
+            case BluetoothChatService.STATE_CONNECTING:
+                showToast("蓝牙连接中……");
+                break;
+            case BluetoothChatService.STATE_CONNECTED:
+                processOnBtConnected();
+                dismissToast();
+                break;
+            case BluetoothChatService.STATE_CONNECTION_FAILED:
+                dismissToast();
+                showAlertDialog("连接失败，请检查设备。", "重试", "选择设备", false, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        autoConnectDevice();
+                    }
+                }, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        searchDevice();
+                    }
+                });
+                break;
+        }
     }
 
     public void setStatus(CharSequence subTitle) {
-        // TODO set status in sub class
+        setToolbarTitle(subTitle + "");
     }
 
-    protected synchronized void onBtConnectionLost() {
-        // TODO onBtConnectionLost
+    public abstract String getBtFilterKey();
+
+    public abstract void processOnBtConnected();
+
+    public void onBtConnectBtnClick() {
+        switch (mConnectStatus) {
+            case BluetoothChatService.STATE_NONE:
+                startNewBTListener();
+            case BluetoothChatService.STATE_LISTEN:
+            case BluetoothChatService.STATE_CONNECTION_FAILED:
+            case BluetoothChatService.STATE_CONNECTION_LOST:
+                autoConnectDevice();
+                break;
+            case BluetoothChatService.STATE_CONNECTED:
+                processOnBtConnected();
+                break;
+            case BluetoothChatService.STATE_CONNECTING:
+                showLongToast("连接中，请稍候...");
+                break;
+        }
     }
 
+    private void autoConnectDevice() {
+        searchAndConnectDeviceForInsecure(getBtFilterKey());
+    }
+
+    private void searchDevice() {
+        searchDeviceForInsecureConnection(getBtFilterKey());
+    }
 }

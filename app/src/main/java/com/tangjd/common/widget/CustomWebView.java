@@ -1,5 +1,6 @@
 package com.tangjd.common.widget;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -141,7 +142,9 @@ public class CustomWebView extends WebView {
             mProgressDialog.setTitle("");
             mProgressDialog.setCancelable(true);
             mProgressDialog.setMessage("加载中...");
-            mProgressDialog.show();
+            if (!((Activity) getContext()).isFinishing()) {
+                mProgressDialog.show();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -1,6 +1,7 @@
 package com.tangjd.common.helper;
 
 import android.annotation.TargetApi;
+import android.content.DialogInterface;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.os.Build;
@@ -65,7 +66,12 @@ public abstract class NfcSignInHelper extends BaseActivity {
             }
             nfc.enableReaderMode(this, mReaderCallback, READER_FLAGS, null);
         } else {
-            showTipDialog("设备NFC功能异常");
+            showAlertDialog("设备NFC功能异常", "重试", "取消", false, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    enableReaderMode();
+                }
+            }, null);
         }
     }
 

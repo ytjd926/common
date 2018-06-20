@@ -165,7 +165,7 @@ public class BaseActivity<T> extends AppCompatActivity {
             public void run() {
                 if (!isFinishing()) {
                     getToast().setText(message);
-                    getToast().setDuration(Toast.LENGTH_LONG);
+                    getToast().setDuration(Integer.MAX_VALUE);
                     getToast().show();
                 }
             }

@@ -63,6 +63,7 @@ public class BluetoothChatService {
     public static final int STATE_CONNECTING = 2; // now initiating an outgoing connection
     public static final int STATE_CONNECTED = 3; // now connected to a remote device
     public static final int STATE_CONNECTION_FAILED = 4; // now connected to a remote device
+    public static final int STATE_CONNECTION_LOST = 5; // now connected to a remote device
 
     private Context mContext;
 
@@ -156,6 +157,14 @@ public class BluetoothChatService {
         // Start the thread to connect with the given device
         mConnectThread = new ConnectThread(device, secure);
         mConnectThread.start();
+
+        // Send the name of the connecting device back to the UI Activity
+        Message msg = mHandler.obtainMessage(Constants.MESSAGE_DEVICE_NAME);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constants.DEVICE_NAME, device.getName());
+        msg.setData(bundle);
+        mHandler.sendMessage(msg);
+
         setState(STATE_CONNECTING);
     }
 
@@ -267,6 +276,7 @@ public class BluetoothChatService {
     private void connectionLost() {
         // Start the service over to restart listening mode
         if (!((BluetoothBaseActivity) mContext).isFinishing()) {
+            BluetoothChatService.this.stop();
             BluetoothChatService.this.start();
         }
 
@@ -399,6 +409,7 @@ public class BluetoothChatService {
                     Log.e(TAG, "unable to close() " + mSocketType + " socket during connection failure", e2);
                 }
                 connectionFailed();
+                e.printStackTrace();
                 return;
             }
 
