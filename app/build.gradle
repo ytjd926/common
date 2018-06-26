@@ -25,7 +25,7 @@ dependencies {
     compile 'com.android.support:design:27.0.2'
     compile 'com.android.support:support-v4:27.0.2'
 
-    compile 'com.android.volley:volley:1.0.0'
+    compile 'com.android.volley:volley:1.1.0'
     compile 'com.koushikdutta.async:androidasync:2.2.1'
     // Retrofit + RxJava ＋ OkHttp
     // Start
