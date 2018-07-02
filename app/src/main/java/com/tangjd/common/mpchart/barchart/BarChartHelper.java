@@ -92,6 +92,8 @@ public class BarChartHelper {
         // scaling can now only be done on x- and y-axis separately
         mChart.setPinchZoom(false);
 
+        mChart.setDoubleTapToZoomEnabled(false);
+
         mChart.setDrawGridBackground(false);
         // mChart.setDrawYLabels(false);
 
@@ -101,6 +103,8 @@ public class BarChartHelper {
         xAxis.setGranularity(1f); // only intervals of 1 day
         xAxis.setLabelCount(showXAxisLabelCount);
         xAxis.setValueFormatter(xAxisLabelFormatter);
+        // x坐标文字旋转-60度
+        xAxis.setLabelRotationAngle(-60);
 
         IAxisValueFormatter custom = new YAxisLabelFormatter(unit);
 
