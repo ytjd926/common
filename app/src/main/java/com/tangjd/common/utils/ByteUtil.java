@@ -1,10 +1,18 @@
 package com.tangjd.common.utils;
 
+import java.io.ByteArrayOutputStream;
+
 /**
  * Created by tangjd on 2017/2/14.
  */
 
 public class ByteUtil {
+
+    private ByteArrayOutputStream mBaos = new ByteArrayOutputStream();
+
+    public interface OnGetSinglePacketListener {
+        void onGetSinglePacket(byte[] singlePacket);
+    }
 
     /**
      * 将LittleEndian unsigned int(32位平台c/c++ unsigned int)转换为Java long.
